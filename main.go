@@ -6,8 +6,6 @@ import (
 	term "github.com/nsf/termbox-go"
 )
 
-var animal = "|"
-
 type Animal struct {
 	X     int
 	Y     int
