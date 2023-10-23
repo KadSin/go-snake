@@ -9,45 +9,53 @@ import (
 )
 
 var animal = "|"
-var x, y = 0, 0
+
+type Animal struct {
+	X     int
+	Y     int
+	Shape string
+}
+
+var snake = Animal{X: 0, Y: 0, Shape: "●"}
 
 func main() {
 	var width, height = screen.Size()
-	x = width / 2
-	y = height / 2
+	snake.X = width / 2
+	snake.Y = height / 2
 
-	changePosition(x, y)
+	startGame()
 }
 
-func changePosition(x int, y int) {
+func startGame() {
 	term.Init()
 	term.HideCursor()
-
 	defer term.Close()
 
+Infinite:
 	for {
-		cursor.Move(x, y)
-
-		fmt.Print(animal)
+		cursor.Move(snake.X, snake.Y)
+		fmt.Print(snake.Shape)
 
 		var event = term.PollEvent()
 
 		if event.Type == term.EventKey {
 			switch event.Key {
 			case term.KeyArrowLeft:
-				term.Sync()
-				fmt.Print(x, y)
-
-				if x > 0 {
-					x -= 1
-				} else {
-					x = 0
-				}
+				snake.moveLeft()
 			case term.KeyCtrlC:
-				panic("bye")
-			default:
-				term.Flush()
+				break Infinite
 			}
+
+			term.Sync()
+			fmt.Print(snake.X, snake.Y)
 		}
+	}
+}
+
+func (animal *Animal) moveLeft() {
+	if animal.X > 0 {
+		animal.X -= 1
+	} else {
+		animal.X = 0
 	}
 }
