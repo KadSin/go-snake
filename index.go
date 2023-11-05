@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"kadsin/snake/entities"
+	"time"
 
 	term "github.com/nsf/termbox-go"
 )
 
-var snake = entities.Animal{X: 0, Y: 0, Shape: '●'}
+var snake = entities.Animal{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT}
 
 func main() {
 	term.Init()
@@ -22,8 +23,10 @@ func startGame() {
 	snake.X = width / 2
 	snake.Y = height / 2
 
+	ticker := time.NewTicker(time.Second / 24) // == 24 FPS
+
 Infinite:
-	for {
+	for range ticker.C {
 		term.Clear(term.ColorDefault, term.ColorDefault)
 		term.SetChar(snake.X, snake.Y, snake.Shape)
 		term.Sync()
@@ -45,5 +48,7 @@ Infinite:
 				break Infinite
 			}
 		}
+
+		snake.UpdateLocation()
 	}
 }

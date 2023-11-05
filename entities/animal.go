@@ -1,50 +1,66 @@
 package entities
 
-import term "github.com/nsf/termbox-go"
+import (
+	"errors"
+
+	term "github.com/nsf/termbox-go"
+)
+
+const (
+	DIRECTION_UP = iota
+	DIRECTION_RIGHT
+	DIRECTION_DOWN
+	DIRECTION_LEFT
+)
 
 type Animal struct {
-	X     int
-	Y     int
-	Shape rune
+	X         int
+	Y         int
+	Shape     rune
+	Direction int
 }
 
-func (animal *Animal) MoveLeft() {
-	if animal.isNotOnBoundry('l') {
-		animal.X -= 1
-	}
-}
+func (animal *Animal) UpdateLocation() error {
+	var width, height = term.Size()
 
-func (animal *Animal) MoveRight() {
-	if animal.isNotOnBoundry('r') {
-		animal.X += 1
+	switch animal.Direction {
+	case DIRECTION_UP:
+		if animal.Y > 0 {
+			animal.Y--
+			return nil
+		}
+	case DIRECTION_RIGHT:
+		if animal.X < width-1 {
+			animal.X++
+			return nil
+		}
+	case DIRECTION_DOWN:
+		if animal.Y < height-1 {
+			animal.Y++
+			return nil
+		}
+	case DIRECTION_LEFT:
+		if animal.X > 0 {
+			animal.X--
+			return nil
+		}
 	}
+
+	return errors.New("Animal is on the boundry")
 }
 
 func (animal *Animal) MoveUp() {
-	if animal.isNotOnBoundry('u') {
-		animal.Y -= 1
-	}
+	animal.Direction = DIRECTION_UP
+}
+
+func (animal *Animal) MoveRight() {
+	animal.Direction = DIRECTION_RIGHT
 }
 
 func (animal *Animal) MoveDown() {
-	if animal.isNotOnBoundry('d') {
-		animal.Y += 1
-	}
+	animal.Direction = DIRECTION_DOWN
 }
 
-func (animal *Animal) isNotOnBoundry(direction rune) bool {
-	var width, height = term.Size()
-
-	switch direction {
-	case 'l':
-		return animal.X > 0
-	case 'r':
-		return animal.X < width-1
-	case 'u':
-		return animal.Y > 0
-	case 'd':
-		return animal.Y < height-1
-	}
-
-	panic("Bad direction")
+func (animal *Animal) MoveLeft() {
+	animal.Direction = DIRECTION_LEFT
 }
