@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"kadsin/snake/entities"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 )
 
 var snake = entities.Animal{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT}
+var exit = false
 
 func main() {
 	term.Init()
@@ -25,12 +25,26 @@ func startGame() {
 
 	ticker := time.NewTicker(time.Second / 24) // == 24 FPS
 
-Infinite:
+	go listenToKeyboard()
+
 	for range ticker.C {
+		if exit {
+			break
+		}
+
 		term.Clear(term.ColorDefault, term.ColorDefault)
 		term.SetChar(snake.X, snake.Y, snake.Shape)
 		term.Sync()
-		fmt.Print(" ", snake.X, snake.Y)
+
+		snake.UpdateLocation()
+	}
+}
+
+func listenToKeyboard() {
+	for {
+		if exit {
+			break
+		}
 
 		var event = term.PollEvent()
 
@@ -45,10 +59,8 @@ Infinite:
 			case term.KeyArrowDown:
 				snake.MoveDown()
 			case term.KeyCtrlC:
-				break Infinite
+				exit = true
 			}
 		}
-
-		snake.UpdateLocation()
 	}
 }
