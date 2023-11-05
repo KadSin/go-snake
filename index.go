@@ -2,17 +2,12 @@ package main
 
 import (
 	"fmt"
+	"kadsin/snake/entities"
 
 	term "github.com/nsf/termbox-go"
 )
 
-type Animal struct {
-	X     int
-	Y     int
-	Shape rune
-}
-
-var snake = Animal{X: 0, Y: 0, Shape: '●'}
+var snake = entities.Animal{X: 0, Y: 0, Shape: '●'}
 
 func main() {
 	term.Init()
@@ -39,57 +34,16 @@ Infinite:
 		if event.Type == term.EventKey {
 			switch event.Key {
 			case term.KeyArrowLeft:
-				snake.moveLeft()
+				snake.MoveLeft()
 			case term.KeyArrowRight:
-				snake.moveRight()
+				snake.MoveRight()
 			case term.KeyArrowUp:
-				snake.moveUp()
+				snake.MoveUp()
 			case term.KeyArrowDown:
-				snake.moveDown()
+				snake.MoveDown()
 			case term.KeyCtrlC:
 				break Infinite
 			}
 		}
 	}
-}
-
-func (animal *Animal) moveLeft() {
-	if animal.isNotOnBoundry('l') {
-		animal.X -= 1
-	}
-}
-
-func (animal *Animal) moveRight() {
-	if animal.isNotOnBoundry('r') {
-		animal.X += 1
-	}
-}
-
-func (animal *Animal) moveUp() {
-	if animal.isNotOnBoundry('u') {
-		animal.Y -= 1
-	}
-}
-
-func (animal *Animal) moveDown() {
-	if animal.isNotOnBoundry('d') {
-		animal.Y += 1
-	}
-}
-
-func (animal *Animal) isNotOnBoundry(direction rune) bool {
-	var width, height = term.Size()
-
-	switch direction {
-	case 'l':
-		return animal.X > 0
-	case 'r':
-		return animal.X < width
-	case 'u':
-		return animal.Y > 0
-	case 'd':
-		return animal.Y < height
-	}
-
-	panic("Bad direction")
 }
