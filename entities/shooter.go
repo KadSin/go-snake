@@ -12,7 +12,7 @@ type Shooter struct {
 	IsShooting bool
 }
 
-func (shooter *Shooter) Shoot() {
+func (shooter *Shooter) Shoot(speed int) {
 	shooter.IsShooting = true
 
 	shooter.Bullet.Direction = shooter.Person.Direction
@@ -20,7 +20,7 @@ func (shooter *Shooter) Shoot() {
 	shooter.Bullet.Y = shooter.Person.Y
 	shooter.Bullet.UpdateLocation(2)
 
-	ticker := time.NewTicker(time.Second / 20)
+	ticker := time.NewTicker(time.Second / time.Duration(speed))
 
 	for range ticker.C {
 		term.SetChar(shooter.Bullet.X, shooter.Bullet.Y, ' ')
@@ -31,7 +31,7 @@ func (shooter *Shooter) Shoot() {
 			break
 		}
 
-		term.SetCell(shooter.Bullet.X, shooter.Bullet.Y, shooter.Bullet.Shape, term.ColorLightYellow, term.ColorDefault)
+		term.SetCell(shooter.Bullet.X, shooter.Bullet.Y, shooter.Bullet.Shape, shooter.Bullet.Color, term.ColorDefault)
 		term.Sync()
 	}
 }
