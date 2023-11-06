@@ -7,7 +7,7 @@ import (
 	term "github.com/nsf/termbox-go"
 )
 
-var shooter = entities.Object{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT, Speed: 10, Color: term.ColorYellow}
+var shooter = entities.Object{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT, Color: term.ColorYellow}
 
 var elements = []*entities.Object{
 	&shooter,
@@ -28,7 +28,7 @@ func startGame() {
 	shooter.X = width / 2
 	shooter.Y = height / 2
 
-	ticker := time.NewTicker(time.Second / time.Duration(shooter.Speed))
+	ticker := time.NewTicker(time.Second / 10)
 
 	go listenToKeyboard()
 
