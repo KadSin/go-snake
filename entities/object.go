@@ -19,6 +19,7 @@ type Object struct {
 	Shape     rune
 	Direction uint8
 	Speed     uint8
+	Color     term.Attribute
 }
 
 func (object *Object) UpdateLocation() error {

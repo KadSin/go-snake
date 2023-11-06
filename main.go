@@ -7,7 +7,11 @@ import (
 	term "github.com/nsf/termbox-go"
 )
 
-var shooter = entities.Object{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT, Speed: 2}
+var shooter = entities.Object{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT, Speed: 10, Color: term.ColorYellow}
+
+var elements = []*entities.Object{
+	&shooter,
+}
 
 var exit = false
 
@@ -34,10 +38,14 @@ func startGame() {
 		}
 
 		term.Clear(term.ColorDefault, term.ColorDefault)
-		term.SetChar(shooter.X, shooter.Y, shooter.Shape)
-		term.Sync()
 
-		shooter.UpdateLocation()
+		for _, element := range elements {
+			term.SetFg(element.X, element.Y, element.Color)
+			term.SetChar(element.X, element.Y, element.Shape)
+			element.UpdateLocation()
+		}
+
+		term.Sync()
 	}
 }
 
