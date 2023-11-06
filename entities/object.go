@@ -18,8 +18,8 @@ type Object struct {
 	Y         int
 	Shape     rune
 	Direction uint8
-	Speed     uint8
 	Color     term.Attribute
+	OnBoundry func()
 }
 
 func (object *Object) UpdateLocation() error {
@@ -46,6 +46,10 @@ func (object *Object) UpdateLocation() error {
 			object.X--
 			return nil
 		}
+	}
+
+	if object.OnBoundry != nil {
+		object.OnBoundry()
 	}
 
 	return errors.New("Object is on the boundry")
