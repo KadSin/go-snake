@@ -19,37 +19,32 @@ type Object struct {
 	Shape     rune
 	Direction uint8
 	Color     term.Attribute
-	OnBoundry func()
 }
 
-func (object *Object) UpdateLocation() error {
+func (object *Object) UpdateLocation(step int) error {
 	var width, height = term.Size()
 
 	switch object.Direction {
 	case DIRECTION_UP:
 		if object.Y > 0 {
-			object.Y--
+			object.Y -= step
 			return nil
 		}
 	case DIRECTION_RIGHT:
 		if object.X < width-1 {
-			object.X++
+			object.X += step
 			return nil
 		}
 	case DIRECTION_DOWN:
 		if object.Y < height-1 {
-			object.Y++
+			object.Y += step
 			return nil
 		}
 	case DIRECTION_LEFT:
 		if object.X > 0 {
-			object.X--
+			object.X -= step
 			return nil
 		}
-	}
-
-	if object.OnBoundry != nil {
-		object.OnBoundry()
 	}
 
 	return errors.New("Object is on the boundry")
