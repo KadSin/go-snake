@@ -7,10 +7,9 @@ import (
 	term "github.com/nsf/termbox-go"
 )
 
-var shooter = entities.Object{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT, Color: term.ColorYellow}
-
-var elements = []*entities.Object{
-	&shooter,
+var shooter = entities.Shooter{
+	Person: entities.Object{Shape: '●', Direction: entities.DIRECTION_RIGHT, Color: term.ColorYellow},
+	Bullet: entities.Object{Shape: '*', Color: term.ColorLightGray},
 }
 
 var exit = false
@@ -25,27 +24,19 @@ func main() {
 
 func startGame() {
 	var width, height = term.Size()
-	shooter.X = width / 2
-	shooter.Y = height / 2
-
-	ticker := time.NewTicker(time.Second / 10)
+	shooter.Person.X = width / 2
+	shooter.Person.Y = height / 2
 
 	go listenToKeyboard()
+
+	ticker := time.NewTicker(time.Second / 24)
 
 	for range ticker.C {
 		if exit {
 			break
 		}
 
-		term.Clear(term.ColorDefault, term.ColorDefault)
-
-		for _, element := range elements {
-			term.SetFg(element.X, element.Y, element.Color)
-			term.SetChar(element.X, element.Y, element.Shape)
-			element.UpdateLocation()
-		}
-
-		term.Sync()
+		shooter.Walk()
 	}
 }
 
@@ -60,13 +51,17 @@ func listenToKeyboard() {
 		if event.Type == term.EventKey {
 			switch event.Key {
 			case term.KeyArrowLeft:
-				shooter.MoveLeft()
+				shooter.Person.MoveLeft()
 			case term.KeyArrowRight:
-				shooter.MoveRight()
+				shooter.Person.MoveRight()
 			case term.KeyArrowUp:
-				shooter.MoveUp()
+				shooter.Person.MoveUp()
 			case term.KeyArrowDown:
-				shooter.MoveDown()
+				shooter.Person.MoveDown()
+			case term.KeySpace:
+				if !shooter.IsShooting {
+					go shooter.Shoot(150)
+				}
 			case term.KeyCtrlC:
 				exit = true
 			}
