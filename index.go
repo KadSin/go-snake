@@ -1,13 +1,14 @@
 package main
 
 import (
-	"kadsin/snake/entities"
+	"kadsin/shoot-run/entities"
 	"time"
 
 	term "github.com/nsf/termbox-go"
 )
 
-var snake = entities.Animal{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT}
+var shooter = entities.Object{X: 0, Y: 0, Shape: '●', Direction: entities.DIRECTION_RIGHT, Speed: 2}
+
 var exit = false
 
 func main() {
@@ -20,10 +21,10 @@ func main() {
 
 func startGame() {
 	var width, height = term.Size()
-	snake.X = width / 2
-	snake.Y = height / 2
+	shooter.X = width / 2
+	shooter.Y = height / 2
 
-	ticker := time.NewTicker(time.Second / 24) // == 24 FPS
+	ticker := time.NewTicker(time.Second / time.Duration(shooter.Speed))
 
 	go listenToKeyboard()
 
@@ -33,10 +34,10 @@ func startGame() {
 		}
 
 		term.Clear(term.ColorDefault, term.ColorDefault)
-		term.SetChar(snake.X, snake.Y, snake.Shape)
+		term.SetChar(shooter.X, shooter.Y, shooter.Shape)
 		term.Sync()
 
-		snake.UpdateLocation()
+		shooter.UpdateLocation()
 	}
 }
 
@@ -51,13 +52,13 @@ func listenToKeyboard() {
 		if event.Type == term.EventKey {
 			switch event.Key {
 			case term.KeyArrowLeft:
-				snake.MoveLeft()
+				shooter.MoveLeft()
 			case term.KeyArrowRight:
-				snake.MoveRight()
+				shooter.MoveRight()
 			case term.KeyArrowUp:
-				snake.MoveUp()
+				shooter.MoveUp()
 			case term.KeyArrowDown:
-				snake.MoveDown()
+				shooter.MoveDown()
 			case term.KeyCtrlC:
 				exit = true
 			}
