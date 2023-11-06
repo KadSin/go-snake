@@ -1,4 +1,4 @@
-module kadsin/snake
+module kadsin/shoot-run
 
 go 1.21.3
 
