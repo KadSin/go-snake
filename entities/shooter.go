@@ -31,7 +31,19 @@ func (shooter *Shooter) Shoot(speed int) {
 			break
 		}
 
-		term.SetCell(shooter.Bullet.X, shooter.Bullet.Y, shooter.Bullet.Shape, shooter.Bullet.Color, term.ColorDefault)
-		term.Sync()
+		printObject(shooter.Bullet)
 	}
+}
+
+func (shooter *Shooter) Walk() {
+	term.SetChar(shooter.Person.X, shooter.Person.Y, ' ')
+
+	shooter.Person.UpdateLocation(1)
+	printObject(shooter.Person)
+}
+
+func printObject(object Object) {
+	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
+
+	term.Sync()
 }
