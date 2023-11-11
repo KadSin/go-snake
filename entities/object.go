@@ -28,28 +28,28 @@ func (object *Object) UpdateLocation(step int) error {
 
 	switch object.Direction {
 	case DIRECTION_UP:
-		if object.Y > 0 {
+		if object.Y-step > 0 {
 			object.Y -= step
 			return nil
 		}
 	case DIRECTION_RIGHT:
-		if object.X < width-1 {
+		if object.X+step < width-1 {
 			object.X += step
 			return nil
 		}
 	case DIRECTION_DOWN:
-		if object.Y < height-1 {
+		if object.Y+step < height-1 {
 			object.Y += step
 			return nil
 		}
 	case DIRECTION_LEFT:
-		if object.X > 0 {
+		if object.X-step > 0 {
 			object.X -= step
 			return nil
 		}
 	}
 
-	return errors.New("Object is on the boundry")
+	return errors.New("Object exceeds the boundary")
 }
 
 func (object *Object) MoveUp() {
