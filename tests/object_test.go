@@ -17,41 +17,70 @@ func reset() {
 }
 
 func TestUpdateLocation(t *testing.T) {
-	cases := map[string][2]func(){
-		"Up":    {obj.MoveUp, func() { assert.Equal(t, 5, obj.Y) }},
-		"Right": {obj.MoveRight, func() { assert.Equal(t, 15, obj.X) }},
-		"Down":  {obj.MoveDown, func() { assert.Equal(t, 15, obj.Y) }},
-		"Left":  {obj.MoveLeft, func() { assert.Equal(t, 5, obj.X) }},
-	}
+	t.Run("Up", func(t *testing.T) {
+		reset()
+		obj.MoveUp()
+		obj.UpdateLocation(5)
 
-	for name, assertion := range cases {
-		t.Run(name, func(t *testing.T) {
-			reset()
+		assert.Equal(t, 5, obj.Y)
+	})
 
-			assertion[0]()
-			obj.UpdateLocation(5)
+	t.Run("Right", func(t *testing.T) {
+		reset()
+		obj.MoveRight()
+		obj.UpdateLocation(5)
 
-			assertion[1]()
-		})
-	}
+		assert.Equal(t, 15, obj.X)
+	})
+
+	t.Run("Down", func(t *testing.T) {
+		reset()
+		obj.MoveDown()
+		obj.UpdateLocation(5)
+
+		assert.Equal(t, 15, obj.Y)
+	})
+
+	t.Run("Left", func(t *testing.T) {
+		reset()
+		obj.MoveLeft()
+		obj.UpdateLocation(5)
+
+		assert.Equal(t, 5, obj.X)
+	})
 }
 
 func TestGetErrorWhenExceedsBoundaries(t *testing.T) {
-	cases := map[string]func(){
-		"Top":    obj.MoveUp,
-		"Right":  obj.MoveRight,
-		"Bottom": obj.MoveDown,
-		"Left":   obj.MoveLeft,
-	}
+	reset()
 
-	for name, changeDirection := range cases {
-		t.Run(name, func(t *testing.T) {
-			reset()
+	t.Run("Top", func(t *testing.T) {
+		obj.MoveUp()
+		error := obj.UpdateLocation(11)
 
-			changeDirection()
-			error := obj.UpdateLocation(11)
+		assert.Error(t, error)
+	})
 
-			assert.Error(t, error)
-		})
-	}
+	t.Run("Right", func(t *testing.T) {
+		reset()
+		obj.MoveRight()
+		error := obj.UpdateLocation(11)
+
+		assert.Error(t, error)
+	})
+
+	t.Run("Bottom", func(t *testing.T) {
+		reset()
+		obj.MoveDown()
+		error := obj.UpdateLocation(11)
+
+		assert.Error(t, error)
+	})
+
+	t.Run("Left", func(t *testing.T) {
+		reset()
+		obj.MoveLeft()
+		error := obj.UpdateLocation(11)
+
+		assert.Error(t, error)
+	})
 }
