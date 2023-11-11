@@ -21,8 +21,10 @@ type Object struct {
 	Color     term.Attribute
 }
 
+var TerminalSize = term.Size
+
 func (object *Object) UpdateLocation(step int) error {
-	var width, height = term.Size()
+	var width, height = TerminalSize()
 
 	switch object.Direction {
 	case DIRECTION_UP:
