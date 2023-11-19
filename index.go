@@ -9,7 +9,6 @@ import (
 
 var shooter = entities.Shooter{
 	Person: entities.Object{Shape: '●', Direction: entities.DIRECTION_RIGHT, Color: term.ColorYellow},
-	Bullet: entities.Object{Shape: '*', Color: term.ColorLightGray},
 }
 
 var exit = false
@@ -29,23 +28,28 @@ func startGame() {
 
 	go listenToKeyboard()
 
-	ticker := time.NewTicker(time.Second / 24)
+	go shooter.Run(24)
 
+	ticker := time.NewTicker(time.Millisecond)
 	for range ticker.C {
 		if exit {
 			break
 		}
 
-		shooter.Walk()
+		term.Clear(term.ColorDefault, term.ColorDefault)
+
+		PrintObject(shooter.Person)
+
+		for _, bullet := range shooter.Bullets {
+			PrintObject(*bullet)
+		}
+
+		term.Flush()
 	}
 }
 
 func listenToKeyboard() {
 	for {
-		if exit {
-			break
-		}
-
 		var event = term.PollEvent()
 
 		if event.Type == term.EventKey {
@@ -59,12 +63,14 @@ func listenToKeyboard() {
 			case term.KeyArrowDown:
 				shooter.Person.MoveDown()
 			case term.KeySpace:
-				if !shooter.IsShooting {
-					go shooter.Shoot(150)
-				}
+				go shooter.Shoot(150)
 			case term.KeyCtrlC:
 				exit = true
 			}
 		}
 	}
+}
+
+func PrintObject(object entities.Object) {
+	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
 }
