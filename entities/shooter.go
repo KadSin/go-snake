@@ -41,9 +41,3 @@ func (shooter *Shooter) Walk() {
 	shooter.Person.UpdateLocation(1)
 	printObject(shooter.Person)
 }
-
-func printObject(object Object) {
-	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
-
-	term.Sync()
-}
