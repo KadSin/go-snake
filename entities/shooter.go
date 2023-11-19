@@ -7,37 +7,59 @@ import (
 )
 
 type Shooter struct {
-	Person     Object
-	Bullet     Object
-	IsShooting bool
+	Person  Object
+	Bullets []*Object
 }
 
 func (shooter *Shooter) Shoot(speed int) {
-	shooter.IsShooting = true
+	bullet := &Object{
+		Shape:     '*',
+		Direction: shooter.Person.Direction,
+		Color:     term.ColorLightGray,
+		X:         shooter.Person.X,
+		Y:         shooter.Person.Y,
+	}
 
-	shooter.Bullet.Direction = shooter.Person.Direction
-	shooter.Bullet.X = shooter.Person.X
-	shooter.Bullet.Y = shooter.Person.Y
-	shooter.Bullet.UpdateLocation(2)
+	shooter.Bullets = append(shooter.Bullets, bullet)
+
+	bullet.UpdateLocation(2)
 
 	ticker := time.NewTicker(time.Second / time.Duration(speed))
 
 	for range ticker.C {
-		term.SetChar(shooter.Bullet.X, shooter.Bullet.Y, ' ')
+		error := bullet.UpdateLocation(1)
 
-		error := shooter.Bullet.UpdateLocation(1)
 		if error != nil {
-			shooter.IsShooting = false
 			break
 		}
-
-		printObject(shooter.Bullet)
 	}
+
+	shooter.removeBullet(bullet)
 }
 
-func (shooter *Shooter) Walk() {
-	term.SetChar(shooter.Person.X, shooter.Person.Y, ' ')
+func (shooter *Shooter) removeBullet(bullet *Object) {
+	for id, b := range shooter.Bullets {
+		if b == bullet {
+			shooter.Bullets[id] = nil
 
-	shooter.Person.UpdateLocation(1)
-	printObject(shooter.Person)
+			if id == 0 {
+				shooter.Bullets = shooter.Bullets[id+1:]
+			} else if id == len(shooter.Bullets)-1 {
+				shooter.Bullets = shooter.Bullets[:id-1]
+			} else {
+				shooter.Bullets = append(shooter.Bullets[id-1:], shooter.Bullets[:id]...)
+			}
+
+			break
+		}
+	}
+
+}
+
+func (shooter *Shooter) Run(speed int) {
+	ticker := time.NewTicker(time.Second / time.Duration(speed))
+
+	for range ticker.C {
+		shooter.Person.UpdateLocation(1)
+	}
 }
