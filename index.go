@@ -2,6 +2,7 @@ package main
 
 import (
 	"kadsin/shoot-run/entities"
+	"math/rand"
 	"time"
 
 	term "github.com/nsf/termbox-go"
@@ -10,6 +11,8 @@ import (
 var shooter = entities.Shooter{
 	Person: entities.Object{Shape: '●', Direction: entities.DIRECTION_RIGHT, Color: term.ColorYellow},
 }
+
+var enemies []*entities.Enemy
 
 var exit = false
 
@@ -30,6 +33,8 @@ func startGame() {
 
 	go shooter.Run(24)
 
+	go GenerateEnemies()
+
 	ticker := time.NewTicker(time.Millisecond)
 	for range ticker.C {
 		if exit {
@@ -44,8 +49,13 @@ func startGame() {
 			PrintObject(*bullet)
 		}
 
+		for _, enemy := range enemies {
+			PrintObject(enemy.Person)
+		}
+
 		term.Flush()
 	}
+
 }
 
 func listenToKeyboard() {
@@ -69,6 +79,37 @@ func listenToKeyboard() {
 			}
 		}
 	}
+}
+
+func GenerateEnemies() {
+	ticker := time.NewTicker(time.Second * 5)
+
+	for range ticker.C {
+		width, height := term.Size()
+
+		x := 0
+		if rand.Float32() < 0.5 {
+			x = width
+		}
+
+		y := 0
+		if rand.Float32() < 0.5 {
+			y = height
+		}
+
+		enemy := entities.Enemy{
+			Person: entities.Object{Shape: '#', X: x, Y: y, Color: term.ColorRed},
+			Target: &shooter.Person,
+		}
+
+		go enemy.GoKill(randomNumberBetween(8, 12))
+
+		enemies = append(enemies, &enemy)
+	}
+}
+
+func randomNumberBetween(min int, max int) int {
+	return rand.Intn(max-min) + min
 }
 
 func PrintObject(object entities.Object) {
