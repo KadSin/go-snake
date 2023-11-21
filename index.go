@@ -30,32 +30,11 @@ func startGame() {
 	shooter.Person.Y = height / 2
 
 	go listenToKeyboard()
-
 	go shooter.Run(24)
 
-	go GenerateEnemies()
+	go generateEnemies()
 
-	ticker := time.NewTicker(time.Millisecond)
-	for range ticker.C {
-		if exit {
-			break
-		}
-
-		term.Clear(term.ColorDefault, term.ColorDefault)
-
-		PrintObject(shooter.Person)
-
-		for _, bullet := range shooter.Bullets {
-			PrintObject(*bullet)
-		}
-
-		for _, enemy := range enemies {
-			PrintObject(enemy.Person)
-		}
-
-		term.Flush()
-	}
-
+	render()
 }
 
 func listenToKeyboard() {
@@ -81,7 +60,7 @@ func listenToKeyboard() {
 	}
 }
 
-func GenerateEnemies() {
+func generateEnemies() {
 	ticker := time.NewTicker(time.Second * 5)
 
 	for range ticker.C {
@@ -112,6 +91,29 @@ func randomNumberBetween(min int, max int) int {
 	return rand.Intn(max-min) + min
 }
 
-func PrintObject(object entities.Object) {
+func printObject(object entities.Object) {
 	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
+}
+
+func render() {
+	ticker := time.NewTicker(time.Millisecond)
+
+	for range ticker.C {
+		if exit {
+			break
+		}
+
+		printObject(shooter.Person)
+
+		for _, bullet := range shooter.Bullets {
+			printObject(*bullet)
+		}
+
+		for _, enemy := range enemies {
+			printObject(enemy.Person)
+		}
+
+		term.Flush()
+		term.Clear(term.ColorDefault, term.ColorDefault)
+	}
 }
