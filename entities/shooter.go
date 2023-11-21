@@ -17,7 +17,9 @@ func (shooter *Shooter) Shoot(speed int) {
 		Direction: shooter.Person.Direction,
 		Color:     term.ColorLightGray,
 		X:         shooter.Person.X,
+		MaxX:      shooter.Person.MaxX,
 		Y:         shooter.Person.Y,
+		MaxY:      shooter.Person.MaxY,
 	}
 
 	shooter.Bullets = append(shooter.Bullets, bullet)
