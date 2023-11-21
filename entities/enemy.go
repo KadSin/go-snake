@@ -9,11 +9,15 @@ type Enemy struct {
 	Target *Object
 }
 
-func (enemy *Enemy) GoKill(speed int) {
+func (enemy *Enemy) GoKill(speed int, onKill func()) {
 	ticker := time.NewTicker(time.Second / time.Duration(speed))
 
 	for range ticker.C {
 		enemy.walk()
+
+		if enemy.didKill() {
+			onKill()
+		}
 	}
 }
 
@@ -31,4 +35,12 @@ func (enemy *Enemy) walk() {
 		enemy.Person.MoveUp()
 	}
 	enemy.Person.UpdateLocation(1)
+}
+
+func (enemy *Enemy) didKill() bool {
+	if enemy.Person.X == enemy.Target.X && enemy.Person.Y == enemy.Target.Y {
+		return true
+	}
+
+	return false
 }

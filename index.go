@@ -102,7 +102,7 @@ func GenerateEnemies() {
 			Target: &shooter.Person,
 		}
 
-		go enemy.GoKill(randomNumberBetween(8, 12))
+		go enemy.GoKill(randomNumberBetween(8, 12), func() {})
 
 		enemies = append(enemies, &enemy)
 	}
