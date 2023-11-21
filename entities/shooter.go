@@ -13,13 +13,12 @@ type Shooter struct {
 
 func (shooter *Shooter) Shoot(speed int) {
 	bullet := &Object{
-		Shape:     '*',
-		Direction: shooter.Person.Direction,
-		Color:     term.ColorLightGray,
-		X:         shooter.Person.X,
-		MaxX:      shooter.Person.MaxX,
-		Y:         shooter.Person.Y,
-		MaxY:      shooter.Person.MaxY,
+		Shape:       '*',
+		Direction:   shooter.Person.Direction,
+		Color:       term.ColorLightGray,
+		Location:    shooter.Person.Location,
+		ScreenStart: shooter.Person.ScreenStart,
+		ScreenSize:  shooter.Person.ScreenSize,
 	}
 
 	shooter.Bullets = append(shooter.Bullets, bullet)

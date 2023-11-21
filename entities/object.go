@@ -14,35 +14,34 @@ const (
 )
 
 type Object struct {
-	X         int
-	Y         int
-	MaxX      int
-	MaxY      int
-	Shape     rune
-	Direction uint8
-	Color     term.Attribute
+	Location    Coordinate
+	ScreenStart Coordinate
+	ScreenSize  Coordinate
+	Shape       rune
+	Direction   uint8
+	Color       term.Attribute
 }
 
 func (object *Object) UpdateLocation(step int) error {
 	switch object.Direction {
 	case DIRECTION_UP:
-		if object.Y-step > 0 {
-			object.Y -= step
+		if object.Location.Y-step > object.ScreenStart.Y {
+			object.Location.Y -= step
 			return nil
 		}
 	case DIRECTION_RIGHT:
-		if object.X+step < object.MaxX-1 {
-			object.X += step
+		if object.Location.X+step < object.ScreenSize.X {
+			object.Location.X += step
 			return nil
 		}
 	case DIRECTION_DOWN:
-		if object.Y+step < object.MaxY-1 {
-			object.Y += step
+		if object.Location.Y+step < object.ScreenSize.Y {
+			object.Location.Y += step
 			return nil
 		}
 	case DIRECTION_LEFT:
-		if object.X-step > 0 {
-			object.X -= step
+		if object.Location.X-step > object.ScreenStart.X {
+			object.Location.X -= step
 			return nil
 		}
 	}

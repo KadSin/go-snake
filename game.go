@@ -19,8 +19,10 @@ type Game struct {
 }
 
 func (game *Game) Start() {
-	game.Shooter.Person.X = game.Width / 2
-	game.Shooter.Person.Y = game.Height / 2
+	game.Shooter.Person.Location = entities.Coordinate{
+		X: game.Width / 2,
+		Y: game.Height / 2,
+	}
 
 	go game.listenToKeyboard()
 	go game.Shooter.Run(24)
@@ -67,12 +69,11 @@ func (game *Game) generateEnemies() {
 
 		enemy := entities.Enemy{
 			Person: entities.Object{
-				Shape: '#',
-				X:     x,
-				MaxX:  game.Width,
-				Y:     y,
-				MaxY:  game.Height,
-				Color: term.ColorRed,
+				Shape:       '#',
+				Location:    entities.Coordinate{X: x, Y: y},
+				ScreenStart: entities.Coordinate{X: game.Left, Y: game.Top},
+				ScreenSize:  entities.Coordinate{X: game.Width, Y: game.Height},
+				Color:       term.ColorRed,
 			},
 			Target: &game.Shooter.Person,
 		}
