@@ -16,16 +16,14 @@ const (
 type Object struct {
 	X         int
 	Y         int
+	MaxX      int
+	MaxY      int
 	Shape     rune
 	Direction uint8
 	Color     term.Attribute
 }
 
-var TerminalSize = term.Size
-
 func (object *Object) UpdateLocation(step int) error {
-	var width, height = TerminalSize()
-
 	switch object.Direction {
 	case DIRECTION_UP:
 		if object.Y-step > 0 {
@@ -33,12 +31,12 @@ func (object *Object) UpdateLocation(step int) error {
 			return nil
 		}
 	case DIRECTION_RIGHT:
-		if object.X+step < width-1 {
+		if object.X+step < object.MaxX-1 {
 			object.X += step
 			return nil
 		}
 	case DIRECTION_DOWN:
-		if object.Y+step < height-1 {
+		if object.Y+step < object.MaxY-1 {
 			object.Y += step
 			return nil
 		}

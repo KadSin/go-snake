@@ -10,10 +10,9 @@ import (
 var obj entities.Object
 
 func reset() {
-	entities.TerminalSize = func() (int, int) { return 20, 20 }
 
-	obj.X = 10
-	obj.Y = 10
+	obj.X, obj.Y = 10, 10
+	obj.MaxX, obj.MaxY = 20, 20
 }
 
 func TestUpdateLocation(t *testing.T) {

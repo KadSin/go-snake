@@ -2,118 +2,56 @@ package main
 
 import (
 	"kadsin/shoot-run/entities"
-	"math/rand"
 	"time"
 
 	term "github.com/nsf/termbox-go"
 )
 
-var shooter = entities.Shooter{
-	Person: entities.Object{Shape: '●', Direction: entities.DIRECTION_RIGHT, Color: term.ColorYellow},
-}
-
-var enemies []*entities.Enemy
-
-var exit = false
+var game Game
 
 func main() {
 	term.Init()
 	term.HideCursor()
 	defer term.Close()
 
-	startGame()
-}
+	game.Width, game.Height = term.Size()
+	game.Shooter = entities.Shooter{
+		Person: entities.Object{
+			Shape:     '●',
+			Direction: entities.DIRECTION_RIGHT,
+			Color:     term.ColorYellow,
+			MaxX:      game.Width,
+			MaxY:      game.Height,
+		},
+	}
 
-func startGame() {
-	var width, height = term.Size()
-	shooter.Person.X = width / 2
-	shooter.Person.Y = height / 2
-
-	go listenToKeyboard()
-	go shooter.Run(24)
-
-	go generateEnemies()
-
+	game.Start()
 	render()
-}
-
-func listenToKeyboard() {
-	for {
-		var event = term.PollEvent()
-
-		if event.Type == term.EventKey {
-			switch event.Key {
-			case term.KeyArrowLeft:
-				shooter.Person.MoveLeft()
-			case term.KeyArrowRight:
-				shooter.Person.MoveRight()
-			case term.KeyArrowUp:
-				shooter.Person.MoveUp()
-			case term.KeyArrowDown:
-				shooter.Person.MoveDown()
-			case term.KeySpace:
-				go shooter.Shoot(150)
-			case term.KeyCtrlC:
-				exit = true
-			}
-		}
-	}
-}
-
-func generateEnemies() {
-	ticker := time.NewTicker(time.Second * 5)
-
-	for range ticker.C {
-		width, height := term.Size()
-
-		x := 0
-		if rand.Float32() < 0.5 {
-			x = width
-		}
-
-		y := 0
-		if rand.Float32() < 0.5 {
-			y = height
-		}
-
-		enemy := entities.Enemy{
-			Person: entities.Object{Shape: '#', X: x, Y: y, Color: term.ColorRed},
-			Target: &shooter.Person,
-		}
-
-		go enemy.GoKill(randomNumberBetween(8, 12), func() {})
-
-		enemies = append(enemies, &enemy)
-	}
-}
-
-func randomNumberBetween(min int, max int) int {
-	return rand.Intn(max-min) + min
-}
-
-func printObject(object entities.Object) {
-	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
 }
 
 func render() {
 	ticker := time.NewTicker(time.Millisecond)
 
 	for range ticker.C {
-		if exit {
+		if game.Exited {
 			break
 		}
 
-		printObject(shooter.Person)
+		printObject(game.Shooter.Person)
 
-		for _, bullet := range shooter.Bullets {
+		for _, bullet := range game.Shooter.Bullets {
 			printObject(*bullet)
 		}
 
-		for _, enemy := range enemies {
+		for _, enemy := range game.Enemies {
 			printObject(enemy.Person)
 		}
 
 		term.Flush()
 		term.Clear(term.ColorDefault, term.ColorDefault)
 	}
+}
+
+func printObject(object entities.Object) {
+	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
 }
