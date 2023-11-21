@@ -17,11 +17,11 @@ func main() {
 	game.Width, game.Height = term.Size()
 	game.Shooter = entities.Shooter{
 		Person: entities.Object{
-			Shape:     '●',
-			Direction: entities.DIRECTION_RIGHT,
-			Color:     term.ColorYellow,
-			MaxX:      game.Width,
-			MaxY:      game.Height,
+			Shape:       '●',
+			Direction:   entities.DIRECTION_RIGHT,
+			Color:       term.ColorYellow,
+			ScreenStart: entities.Coordinate{X: 0, Y: 0},
+			ScreenSize:  entities.Coordinate{X: game.Width, Y: game.Height},
 		},
 	}
 
@@ -53,5 +53,5 @@ func render() {
 }
 
 func printObject(object entities.Object) {
-	term.SetCell(object.X, object.Y, object.Shape, object.Color, term.ColorDefault)
+	term.SetCell(object.Location.X, object.Location.Y, object.Shape, object.Color, term.ColorDefault)
 }

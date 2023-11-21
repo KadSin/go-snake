@@ -7,12 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var obj entities.Object
+var obj = entities.Object{
+	ScreenStart: entities.Coordinate{X: 0, Y: 0},
+	ScreenSize:  entities.Coordinate{X: 20, Y: 20},
+}
 
 func reset() {
-
-	obj.X, obj.Y = 10, 10
-	obj.MaxX, obj.MaxY = 20, 20
+	obj.Location = entities.Coordinate{X: 10, Y: 10}
 }
 
 func TestUpdateLocation(t *testing.T) {
@@ -21,7 +22,7 @@ func TestUpdateLocation(t *testing.T) {
 		obj.MoveUp()
 		obj.UpdateLocation(5)
 
-		assert.Equal(t, 5, obj.Y)
+		assert.Equal(t, 5, obj.Location.Y)
 	})
 
 	t.Run("Right", func(t *testing.T) {
@@ -29,7 +30,7 @@ func TestUpdateLocation(t *testing.T) {
 		obj.MoveRight()
 		obj.UpdateLocation(5)
 
-		assert.Equal(t, 15, obj.X)
+		assert.Equal(t, 15, obj.Location.X)
 	})
 
 	t.Run("Down", func(t *testing.T) {
@@ -37,7 +38,7 @@ func TestUpdateLocation(t *testing.T) {
 		obj.MoveDown()
 		obj.UpdateLocation(5)
 
-		assert.Equal(t, 15, obj.Y)
+		assert.Equal(t, 15, obj.Location.Y)
 	})
 
 	t.Run("Left", func(t *testing.T) {
@@ -45,7 +46,7 @@ func TestUpdateLocation(t *testing.T) {
 		obj.MoveLeft()
 		obj.UpdateLocation(5)
 
-		assert.Equal(t, 5, obj.X)
+		assert.Equal(t, 5, obj.Location.X)
 	})
 }
 
