@@ -53,8 +53,22 @@ func render() {
 			printObject(enemy.Person)
 		}
 
+		drawWalls()
+
 		term.Flush()
 		term.Clear(term.ColorDefault, term.ColorDefault)
+	}
+}
+
+func drawWalls() {
+	for x := game.Screen.Start.X - 1; x < game.Screen.End.X+1; x++ {
+		term.SetCell(x, game.Screen.Start.Y-1, '█', term.ColorGreen, term.ColorDefault)
+		term.SetCell(x, game.Screen.End.Y, '█', term.ColorGreen, term.ColorDefault)
+	}
+
+	for y := game.Screen.Start.Y - 1; y < game.Screen.End.Y+1; y++ {
+		term.SetCell(game.Screen.Start.X-1, y, '█', term.ColorGreen, term.ColorDefault)
+		term.SetCell(game.Screen.End.X, y, '█', term.ColorGreen, term.ColorDefault)
 	}
 }
 
