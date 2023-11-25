@@ -8,8 +8,10 @@ import (
 )
 
 var obj = entities.Object{
-	ScreenStart: entities.Coordinate{X: 0, Y: 0},
-	ScreenSize:  entities.Coordinate{X: 20, Y: 20},
+	Screen: entities.Screen{
+		Start: entities.Coordinate{X: 0, Y: 0},
+		End:   entities.Coordinate{X: 20, Y: 20},
+	},
 }
 
 func reset() {

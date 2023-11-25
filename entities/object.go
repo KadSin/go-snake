@@ -14,33 +14,32 @@ const (
 )
 
 type Object struct {
-	Location    Coordinate
-	ScreenStart Coordinate
-	ScreenSize  Coordinate
-	Shape       rune
-	Direction   uint8
-	Color       term.Attribute
+	Location  Coordinate
+	Screen    Screen
+	Shape     rune
+	Direction uint8
+	Color     term.Attribute
 }
 
 func (object *Object) UpdateLocation(step int) error {
 	switch object.Direction {
 	case DIRECTION_UP:
-		if object.Location.Y-step > object.ScreenStart.Y {
+		if object.Location.Y-step >= object.Screen.Start.Y {
 			object.Location.Y -= step
 			return nil
 		}
 	case DIRECTION_RIGHT:
-		if object.Location.X+step < object.ScreenSize.X {
+		if object.Location.X+step < object.Screen.End.X {
 			object.Location.X += step
 			return nil
 		}
 	case DIRECTION_DOWN:
-		if object.Location.Y+step < object.ScreenSize.Y {
+		if object.Location.Y+step < object.Screen.End.Y {
 			object.Location.Y += step
 			return nil
 		}
 	case DIRECTION_LEFT:
-		if object.Location.X-step > object.ScreenStart.X {
+		if object.Location.X-step >= object.Screen.Start.X {
 			object.Location.X -= step
 			return nil
 		}

@@ -9,10 +9,7 @@ import (
 )
 
 type Game struct {
-	Width   int
-	Height  int
-	Left    int
-	Top     int
+	Screen  entities.Screen
 	Exited  bool
 	Shooter entities.Shooter
 	Enemies []*entities.Enemy
@@ -20,8 +17,8 @@ type Game struct {
 
 func (game *Game) Start() {
 	game.Shooter.Person.Location = entities.Coordinate{
-		X: game.Width / 2,
-		Y: game.Height / 2,
+		X: game.Screen.End.X / 2,
+		Y: game.Screen.End.Y / 2,
 	}
 
 	go game.listenToKeyboard()
@@ -59,21 +56,20 @@ func (game *Game) generateEnemies() {
 	for range ticker.C {
 		x := 0
 		if rand.Float32() < 0.5 {
-			x = game.Width
+			x = game.Screen.End.X
 		}
 
 		y := 0
 		if rand.Float32() < 0.5 {
-			y = game.Height
+			y = game.Screen.End.Y
 		}
 
 		enemy := entities.Enemy{
 			Person: entities.Object{
-				Shape:       '#',
-				Location:    entities.Coordinate{X: x, Y: y},
-				ScreenStart: entities.Coordinate{X: game.Left, Y: game.Top},
-				ScreenSize:  entities.Coordinate{X: game.Width, Y: game.Height},
-				Color:       term.ColorRed,
+				Shape:    '#',
+				Location: entities.Coordinate{X: x, Y: y},
+				Screen:   game.Screen,
+				Color:    term.ColorRed,
 			},
 			Target: &game.Shooter.Person,
 		}

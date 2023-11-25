@@ -14,14 +14,19 @@ func main() {
 	term.HideCursor()
 	defer term.Close()
 
-	game.Width, game.Height = term.Size()
+	width, height := term.Size()
+	game = Game{
+		Screen: entities.Screen{
+			Start: entities.Coordinate{X: 1, Y: 1},
+			End:   entities.Coordinate{X: width - 1, Y: height - 1},
+		},
+	}
 	game.Shooter = entities.Shooter{
 		Person: entities.Object{
-			Shape:       '●',
-			Direction:   entities.DIRECTION_RIGHT,
-			Color:       term.ColorYellow,
-			ScreenStart: entities.Coordinate{X: 0, Y: 0},
-			ScreenSize:  entities.Coordinate{X: game.Width, Y: game.Height},
+			Shape:     '●',
+			Direction: entities.DIRECTION_RIGHT,
+			Color:     term.ColorYellow,
+			Screen:    game.Screen,
 		},
 	}
 
@@ -30,6 +35,7 @@ func main() {
 }
 
 func render() {
+
 	ticker := time.NewTicker(time.Millisecond)
 
 	for range ticker.C {
