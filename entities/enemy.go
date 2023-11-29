@@ -38,9 +38,8 @@ func (enemy *Enemy) walk() {
 }
 
 func (enemy *Enemy) didKill() bool {
-	if enemy.Person.Location.X == enemy.Target.Location.X && enemy.Person.Location.Y == enemy.Target.Location.Y {
-		return true
-	}
+	isEnemyNearbyTargetHorizontal := enemy.Person.Location.X >= enemy.Target.Location.X-1 && enemy.Person.Location.X <= enemy.Target.Location.X+1
+	isEnemyNearbyTargetVertical := enemy.Person.Location.Y >= enemy.Target.Location.Y-1 && enemy.Person.Location.Y <= enemy.Target.Location.Y+1
 
-	return false
+	return isEnemyNearbyTargetHorizontal && isEnemyNearbyTargetVertical
 }
