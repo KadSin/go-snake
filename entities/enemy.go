@@ -1,23 +1,17 @@
 package entities
 
-import (
-	"time"
-)
-
 type Enemy struct {
 	Person Object
 	Target *Object
+	Speed  int
+	OnKill func()
 }
 
-func (enemy *Enemy) GoKill(speed int, onKill func()) {
-	ticker := time.NewTicker(time.Second / time.Duration(speed))
+func (enemy *Enemy) GoKill() {
+	enemy.walk()
 
-	for range ticker.C {
-		enemy.walk()
-
-		if enemy.Person.doesHit(*enemy.Target) {
-			onKill()
-		}
+	if enemy.Person.doesHit(*enemy.Target) {
+		enemy.OnKill()
 	}
 }
 

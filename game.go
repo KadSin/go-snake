@@ -9,13 +9,23 @@ import (
 )
 
 type Game struct {
-	Screen  entities.Screen
-	Exited  bool
-	Shooter entities.Shooter
-	Enemies []*entities.Enemy
+	Screen           entities.Screen
+	Exited           bool
+	Shooter          entities.Shooter
+	Enemies          []*entities.Enemy
+	LastTimeMovement EntityMovementLastTime
+}
+
+type EntityMovementLastTime struct {
+	Enemies map[*entities.Enemy]int64
+	Shooter int64
+	Bullets int64
 }
 
 func (game *Game) Start() {
+	game.LastTimeMovement.Enemies = make(map[*entities.Enemy]int64)
+
+	game.Shooter.Speed = 40
 	game.Shooter.Person.Location = entities.Coordinate{
 		X: game.Screen.End.X / 2,
 		Y: game.Screen.End.Y / 2,
@@ -23,10 +33,9 @@ func (game *Game) Start() {
 
 	go game.listenToKeyboard()
 
-	go game.Shooter.Run(24)
-	go game.Shooter.ListenToBullets(150)
-
 	go game.generateEnemies()
+
+	go game.updateLocations()
 }
 
 func (game *Game) listenToKeyboard() {
@@ -74,16 +83,48 @@ func (game *Game) generateEnemies() {
 				Color:    term.ColorRed,
 			},
 			Target: &game.Shooter.Person,
+			Speed:  randomNumberBetween(80, 125),
+			OnKill: func() { game.Exited = true },
 		}
 
-		go enemy.GoKill(randomNumberBetween(8, 12), func() {
-			game.Exited = true
-		})
-
 		game.Enemies = append(game.Enemies, &enemy)
+		game.LastTimeMovement.Enemies[&enemy] = 0
 	}
 }
 
 func randomNumberBetween(min int, max int) int {
 	return rand.Intn(max-min) + min
+}
+
+func (game *Game) updateLocations() {
+	ticker := time.NewTicker(time.Millisecond)
+
+	for t := range ticker.C {
+		game.moveEnemies(t)
+		game.moveShooter(t)
+		game.moveBullets(t)
+	}
+}
+
+func (game *Game) moveEnemies(t time.Time) {
+	for _, e := range game.Enemies {
+		if t.UnixMilli() > game.LastTimeMovement.Enemies[e]+int64(e.Speed) {
+			e.GoKill()
+			game.LastTimeMovement.Enemies[e] = t.UnixMilli()
+		}
+	}
+}
+
+func (game *Game) moveShooter(t time.Time) {
+	if t.UnixMilli() > game.LastTimeMovement.Shooter+int64(game.Shooter.Speed) {
+		game.Shooter.Person.UpdateLocation(1)
+		game.LastTimeMovement.Shooter = t.UnixMilli()
+	}
+}
+
+func (game *Game) moveBullets(t time.Time) {
+	if t.UnixMilli() > game.LastTimeMovement.Bullets+6 {
+		game.Shooter.UpdateLocationOfBullets()
+		game.LastTimeMovement.Bullets = t.UnixMilli()
+	}
 }

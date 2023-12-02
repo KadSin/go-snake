@@ -1,13 +1,12 @@
 package entities
 
 import (
-	"time"
-
 	term "github.com/nsf/termbox-go"
 )
 
 type Shooter struct {
 	Person  Object
+	Speed   int
 	Bullets []*Object
 }
 
@@ -25,21 +24,17 @@ func (shooter *Shooter) Shoot() {
 	bullet.UpdateLocation(2)
 }
 
-func (shooter *Shooter) ListenToBullets(speed int) {
-	ticker := time.NewTicker(time.Second / time.Duration(speed))
+func (shooter *Shooter) UpdateLocationOfBullets() {
+	for _, b := range shooter.Bullets {
+		error := b.UpdateLocation(1)
 
-	for range ticker.C {
-		for _, b := range shooter.Bullets {
-			error := b.UpdateLocation(1)
-
-			if error != nil {
-				shooter.RemoveBullet(b)
-			}
+		if error != nil {
+			shooter.removeBullet(b)
 		}
 	}
 }
 
-func (shooter *Shooter) RemoveBullet(bullet *Object) {
+func (shooter *Shooter) removeBullet(bullet *Object) {
 	for id, b := range shooter.Bullets {
 		if b == bullet {
 			shooter.Bullets[id] = nil
@@ -56,12 +51,4 @@ func (shooter *Shooter) RemoveBullet(bullet *Object) {
 		}
 	}
 
-}
-
-func (shooter *Shooter) Run(speed int) {
-	ticker := time.NewTicker(time.Second / time.Duration(speed))
-
-	for range ticker.C {
-		shooter.Person.UpdateLocation(1)
-	}
 }
