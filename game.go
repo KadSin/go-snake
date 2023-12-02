@@ -22,7 +22,9 @@ func (game *Game) Start() {
 	}
 
 	go game.listenToKeyboard()
+
 	go game.Shooter.Run(24)
+	go game.Shooter.ListenToBullets(150)
 
 	go game.generateEnemies()
 }
@@ -42,7 +44,7 @@ func (game *Game) listenToKeyboard() {
 			case term.KeyArrowDown:
 				game.Shooter.Person.MoveDown()
 			case term.KeySpace:
-				go game.Shooter.Shoot(150)
+				go game.Shooter.Shoot()
 			case term.KeyCtrlC:
 				game.Exited = true
 			}

@@ -11,7 +11,7 @@ type Shooter struct {
 	Bullets []*Object
 }
 
-func (shooter *Shooter) Shoot(speed int) {
+func (shooter *Shooter) Shoot() {
 	bullet := &Object{
 		Shape:     '*',
 		Direction: shooter.Person.Direction,
@@ -23,21 +23,23 @@ func (shooter *Shooter) Shoot(speed int) {
 	shooter.Bullets = append(shooter.Bullets, bullet)
 
 	bullet.UpdateLocation(2)
+}
 
+func (shooter *Shooter) ListenToBullets(speed int) {
 	ticker := time.NewTicker(time.Second / time.Duration(speed))
 
 	for range ticker.C {
-		error := bullet.UpdateLocation(1)
+		for _, b := range shooter.Bullets {
+			error := b.UpdateLocation(1)
 
-		if error != nil {
-			break
+			if error != nil {
+				shooter.RemoveBullet(b)
+			}
 		}
 	}
-
-	shooter.removeBullet(bullet)
 }
 
-func (shooter *Shooter) removeBullet(bullet *Object) {
+func (shooter *Shooter) RemoveBullet(bullet *Object) {
 	for id, b := range shooter.Bullets {
 		if b == bullet {
 			shooter.Bullets[id] = nil
