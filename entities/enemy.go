@@ -15,7 +15,7 @@ func (enemy *Enemy) GoKill(speed int, onKill func()) {
 	for range ticker.C {
 		enemy.walk()
 
-		if enemy.didKill() {
+		if enemy.Person.doesHit(*enemy.Target) {
 			onKill()
 		}
 	}
@@ -35,11 +35,4 @@ func (enemy *Enemy) walk() {
 		enemy.Person.MoveUp()
 	}
 	enemy.Person.UpdateLocation(1)
-}
-
-func (enemy *Enemy) didKill() bool {
-	isEnemyNearbyTargetHorizontal := enemy.Person.Location.X >= enemy.Target.Location.X-1 && enemy.Person.Location.X <= enemy.Target.Location.X+1
-	isEnemyNearbyTargetVertical := enemy.Person.Location.Y >= enemy.Target.Location.Y-1 && enemy.Person.Location.Y <= enemy.Target.Location.Y+1
-
-	return isEnemyNearbyTargetHorizontal && isEnemyNearbyTargetVertical
 }
