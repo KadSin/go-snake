@@ -22,10 +22,17 @@ type EntityMovementLastTime struct {
 	Bullets int64
 }
 
+const (
+	SPEED_SHOOTER   = 40
+	SPEED_BULLET    = 6
+	SPEED_MIN_ENEMY = 80
+	SPEED_MAX_ENEMY = 125
+)
+
 func (game *Game) Start() {
 	game.LastTimeMovement.Enemies = make(map[*entities.Enemy]int64)
 
-	game.Shooter.Speed = 40
+	game.Shooter.Speed = SPEED_SHOOTER
 	game.Shooter.Person.Location = entities.Coordinate{
 		X: game.Screen.End.X / 2,
 		Y: game.Screen.End.Y / 2,
@@ -83,8 +90,7 @@ func (game *Game) generateEnemies() {
 				Color:    term.ColorRed,
 			},
 			Target: &game.Shooter.Person,
-			Speed:  randomNumberBetween(80, 125),
-			OnKill: func() { game.Exited = true },
+			Speed:  randomNumberBetween(SPEED_MIN_ENEMY, SPEED_MAX_ENEMY),
 		}
 
 		game.Enemies = append(game.Enemies, &enemy)
@@ -100,18 +106,9 @@ func (game *Game) updateLocations() {
 	ticker := time.NewTicker(time.Millisecond)
 
 	for t := range ticker.C {
-		game.moveEnemies(t)
 		game.moveShooter(t)
+		game.moveEnemies(t)
 		game.moveBullets(t)
-	}
-}
-
-func (game *Game) moveEnemies(t time.Time) {
-	for _, e := range game.Enemies {
-		if t.UnixMilli() > game.LastTimeMovement.Enemies[e]+int64(e.Speed) {
-			e.GoKill()
-			game.LastTimeMovement.Enemies[e] = t.UnixMilli()
-		}
 	}
 }
 
@@ -122,9 +119,26 @@ func (game *Game) moveShooter(t time.Time) {
 	}
 }
 
+func (game *Game) moveEnemies(t time.Time) {
+	for _, e := range game.Enemies {
+		if t.UnixMilli() > game.LastTimeMovement.Enemies[e]+int64(e.Speed) {
+			e.Walk()
+
+			if e.Person.DoesHit(*e.Target) {
+				game.Exited = true
+			}
+
+			game.LastTimeMovement.Enemies[e] = t.UnixMilli()
+		}
+	}
+}
+
 func (game *Game) moveBullets(t time.Time) {
-	if t.UnixMilli() > game.LastTimeMovement.Bullets+6 {
-		game.Shooter.UpdateLocationOfBullets()
+	if t.UnixMilli() > game.LastTimeMovement.Bullets+SPEED_BULLET {
+		for _, b := range game.Shooter.Bullets {
+			game.Shooter.GoShot(b)
+		}
+
 		game.LastTimeMovement.Bullets = t.UnixMilli()
 	}
 }

@@ -64,7 +64,7 @@ func (object *Object) MoveLeft() {
 	object.Direction = DIRECTION_LEFT
 }
 
-func (object *Object) doesHit(target Object) bool {
+func (object *Object) DoesHit(target Object) bool {
 	isObjectNearbyTargetHorizontal := object.Location.X >= target.Location.X-1 && object.Location.X <= target.Location.X+1
 	isObjectNearbyTargetVertical := object.Location.Y >= target.Location.Y-1 && object.Location.Y <= target.Location.Y+1
 

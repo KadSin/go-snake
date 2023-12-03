@@ -7,15 +7,7 @@ type Enemy struct {
 	OnKill func()
 }
 
-func (enemy *Enemy) GoKill() {
-	enemy.walk()
-
-	if enemy.Person.doesHit(*enemy.Target) {
-		enemy.OnKill()
-	}
-}
-
-func (enemy *Enemy) walk() {
+func (enemy *Enemy) Walk() {
 	if enemy.Target.Location.X > enemy.Person.Location.X {
 		enemy.Person.MoveRight()
 	} else if enemy.Target.Location.X < enemy.Person.Location.X {
