@@ -24,17 +24,15 @@ func (shooter *Shooter) Shoot() {
 	bullet.UpdateLocation(2)
 }
 
-func (shooter *Shooter) UpdateLocationOfBullets() {
-	for _, b := range shooter.Bullets {
-		error := b.UpdateLocation(1)
+func (shooter *Shooter) GoShot(bullet *Object) {
+	error := bullet.UpdateLocation(1)
 
-		if error != nil {
-			shooter.removeBullet(b)
-		}
+	if error != nil {
+		shooter.RemoveBullet(bullet)
 	}
 }
 
-func (shooter *Shooter) removeBullet(bullet *Object) {
+func (shooter *Shooter) RemoveBullet(bullet *Object) {
 	for id, b := range shooter.Bullets {
 		if b == bullet {
 			shooter.Bullets[id] = nil
@@ -50,5 +48,4 @@ func (shooter *Shooter) removeBullet(bullet *Object) {
 			break
 		}
 	}
-
 }
