@@ -137,8 +137,33 @@ func (game *Game) moveBullets(t time.Time) {
 	if t.UnixMilli() > game.LastTimeMovement.Bullets+SPEED_BULLET {
 		for _, b := range game.Shooter.Bullets {
 			game.Shooter.GoShot(b)
+
+			for _, e := range game.Enemies {
+				if b.DoesHit(e.Person) {
+					game.RemoveEnemy(e)
+					game.Shooter.RemoveBullet(b)
+				}
+			}
 		}
 
 		game.LastTimeMovement.Bullets = t.UnixMilli()
+	}
+}
+
+func (game *Game) RemoveEnemy(enemy *entities.Enemy) {
+	for id, e := range game.Enemies {
+		if e == enemy {
+			game.Enemies[id] = nil
+
+			if id == 0 {
+				game.Enemies = game.Enemies[id+1:]
+			} else if id == len(game.Enemies)-1 {
+				game.Enemies = game.Enemies[:id-1]
+			} else {
+				game.Enemies = append(game.Enemies[id-1:], game.Enemies[:id]...)
+			}
+
+			break
+		}
 	}
 }
