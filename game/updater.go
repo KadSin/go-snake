@@ -29,7 +29,9 @@ func (game *Game) generateEnemies(t time.Time) {
 	if t.UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(assets.SPEED_ENEMY_GENERATOR) {
 		game.LastTimeActions.EnemyGenerator = t.UnixMilli()
 
-		x, y := 0, 0
+		x := randomElement(game.Screen.Start.X, game.Screen.End.X)
+		y := randomElement(game.Screen.Start.Y, game.Screen.End.Y)
+
 		if rand.Float32() > 0.5 {
 			x = randomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
 		} else {
@@ -56,6 +58,14 @@ func randomNumberBetween(min int, max int) int {
 	return rand.Intn(max-min) + min
 }
 
+func randomElement(first int, second int) int {
+	if rand.Float32() > 0.5 {
+		return first
+	} else {
+		return second
+	}
+}
+
 func (game *Game) moveShooter(t time.Time) {
 	if t.UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
 		game.LastTimeActions.Shooter = t.UnixMilli()
@@ -71,7 +81,7 @@ func (game *Game) moveEnemies(t time.Time) {
 
 			e.Walk()
 			if e.Person.DoesHit(*e.Target) {
-				// game.Exited = true
+				game.Exited = true
 			}
 		}
 	}
