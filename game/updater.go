@@ -1,11 +1,10 @@
 package game
 
 import (
+	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
 	"math/rand"
 	"time"
-
-	term "github.com/nsf/termbox-go"
 )
 
 func (game *Game) update() {
@@ -27,7 +26,7 @@ func (game *Game) update() {
 }
 
 func (game *Game) generateEnemies(t time.Time) {
-	if t.UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(SPEED_ENEMY_GENERATOR) {
+	if t.UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(assets.SPEED_ENEMY_GENERATOR) {
 		game.LastTimeActions.EnemyGenerator = t.UnixMilli()
 
 		x, y := 0, 0
@@ -40,12 +39,12 @@ func (game *Game) generateEnemies(t time.Time) {
 		enemy := entities.Enemy{
 			Person: entities.Object{
 				Shape:    '#',
-				Location: entities.Coordinate{X: x, Y: y},
+				Location: assets.Coordinate{X: x, Y: y},
 				Screen:   game.Screen,
-				Color:    term.ColorRed,
+				Color:    assets.COLOR_ENEMIES,
 			},
 			Target: &game.Shooter.Person,
-			Speed:  randomNumberBetween(SPEED_MIN_ENEMY, SPEED_MAX_ENEMY),
+			Speed:  randomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
 		}
 
 		game.Enemies = append(game.Enemies, &enemy)
@@ -72,14 +71,14 @@ func (game *Game) moveEnemies(t time.Time) {
 
 			e.Walk()
 			if e.Person.DoesHit(*e.Target) {
-				game.Exited = true
+				// game.Exited = true
 			}
 		}
 	}
 }
 
 func (game *Game) moveBullets(t time.Time) {
-	if t.UnixMilli() > game.LastTimeActions.Bullets+SPEED_BULLET {
+	if t.UnixMilli() > game.LastTimeActions.Bullets+assets.SPEED_BULLET {
 		game.LastTimeActions.Bullets = t.UnixMilli()
 
 		for _, b := range game.Shooter.Bullets {

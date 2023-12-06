@@ -1,13 +1,14 @@
 package game
 
 import (
+	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
 
 	term "github.com/nsf/termbox-go"
 )
 
 type Game struct {
-	Screen          entities.Screen
+	Screen          assets.Screen
 	Exited          bool
 	Shooter         entities.Shooter
 	Enemies         []*entities.Enemy
@@ -24,8 +25,8 @@ type LastActionAt struct {
 func (game *Game) Start() {
 	game.LastTimeActions.Enemies = make(map[*entities.Enemy]int64)
 
-	game.Shooter.Speed = SPEED_SHOOTER
-	game.Shooter.Person.Location = entities.Coordinate{
+	game.Shooter.Speed = assets.SPEED_SHOOTER
+	game.Shooter.Person.Location = assets.Coordinate{
 		X: game.Screen.End.X / 2,
 		Y: game.Screen.End.Y / 2,
 	}
@@ -77,13 +78,13 @@ func (game *Game) render() {
 
 func (game *Game) drawWalls() {
 	for x := game.Screen.Start.X - 1; x < game.Screen.End.X+1; x++ {
-		term.SetCell(x, game.Screen.Start.Y-1, '█', term.ColorGreen, term.ColorDefault)
-		term.SetCell(x, game.Screen.End.Y, '█', term.ColorGreen, term.ColorDefault)
+		term.SetCell(x, game.Screen.Start.Y-1, '█', assets.COLOR_WALLS, term.ColorDefault)
+		term.SetCell(x, game.Screen.End.Y, '█', assets.COLOR_WALLS, term.ColorDefault)
 	}
 
 	for y := game.Screen.Start.Y - 1; y < game.Screen.End.Y+1; y++ {
-		term.SetCell(game.Screen.Start.X-1, y, '█', term.ColorGreen, term.ColorDefault)
-		term.SetCell(game.Screen.End.X, y, '█', term.ColorGreen, term.ColorDefault)
+		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, term.ColorDefault)
+		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, term.ColorDefault)
 	}
 }
 

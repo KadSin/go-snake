@@ -1,7 +1,7 @@
 package entities
 
 import (
-	term "github.com/nsf/termbox-go"
+	"kadsin/shoot-run/game/assets"
 )
 
 type Shooter struct {
@@ -14,7 +14,7 @@ func (shooter *Shooter) Shoot() {
 	bullet := &Object{
 		Shape:     '*',
 		Direction: shooter.Person.Direction,
-		Color:     term.ColorLightGray,
+		Color:     assets.COLOR_BULLETS,
 		Location:  shooter.Person.Location,
 		Screen:    shooter.Person.Screen,
 	}
