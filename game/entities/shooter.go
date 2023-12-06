@@ -42,7 +42,7 @@ func (shooter *Shooter) RemoveBullet(bullet *Object) {
 			} else if id == len(shooter.Bullets)-1 {
 				shooter.Bullets = shooter.Bullets[:id-1]
 			} else {
-				shooter.Bullets = append(shooter.Bullets[id-1:], shooter.Bullets[:id]...)
+				shooter.Bullets = append(shooter.Bullets[:id], shooter.Bullets[id+1:]...)
 			}
 
 			break
