@@ -30,14 +30,11 @@ func (game *Game) generateEnemies(t time.Time) {
 	if t.UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(SPEED_ENEMY_GENERATOR) {
 		game.LastTimeActions.EnemyGenerator = t.UnixMilli()
 
-		x := 0
-		if rand.Float32() < 0.5 {
-			x = game.Screen.End.X
-		}
-
-		y := 0
-		if rand.Float32() < 0.5 {
-			y = game.Screen.End.Y
+		x, y := 0, 0
+		if rand.Float32() > 0.5 {
+			x = randomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
+		} else {
+			y = randomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
 		}
 
 		enemy := entities.Enemy{
