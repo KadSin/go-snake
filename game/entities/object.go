@@ -2,6 +2,7 @@ package entities
 
 import (
 	"errors"
+	"kadsin/shoot-run/game/assets"
 
 	term "github.com/nsf/termbox-go"
 )
@@ -14,8 +15,8 @@ const (
 )
 
 type Object struct {
-	Location  Coordinate
-	Screen    Screen
+	Location  assets.Coordinate
+	Screen    assets.Screen
 	Shape     rune
 	Direction uint8
 	Color     term.Attribute

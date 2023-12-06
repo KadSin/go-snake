@@ -1,21 +1,22 @@
 package tests
 
 import (
-	"kadsin/shoot-run/entities"
+	"kadsin/shoot-run/game/assets"
+	"kadsin/shoot-run/game/entities"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var obj = entities.Object{
-	Screen: entities.Screen{
-		Start: entities.Coordinate{X: 0, Y: 0},
-		End:   entities.Coordinate{X: 20, Y: 20},
+	Screen: assets.Screen{
+		Start: assets.Coordinate{X: 0, Y: 0},
+		End:   assets.Coordinate{X: 20, Y: 20},
 	},
 }
 
 func reset() {
-	obj.Location = entities.Coordinate{X: 10, Y: 10}
+	obj.Location = assets.Coordinate{X: 10, Y: 10}
 }
 
 func TestUpdateLocation(t *testing.T) {

@@ -1,4 +1,4 @@
-package entities
+package assets
 
 type Coordinate struct {
 	X, Y int

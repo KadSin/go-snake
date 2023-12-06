@@ -2,6 +2,7 @@ package main
 
 import (
 	"kadsin/shoot-run/game"
+	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
 
 	term "github.com/nsf/termbox-go"
@@ -16,9 +17,9 @@ func main() {
 
 	width, height := term.Size()
 	g = game.Game{
-		Screen: entities.Screen{
-			Start: entities.Coordinate{X: 1, Y: 1},
-			End:   entities.Coordinate{X: width - 1, Y: height - 1},
+		Screen: assets.Screen{
+			Start: assets.Coordinate{X: 1, Y: 1},
+			End:   assets.Coordinate{X: width - 1, Y: height - 1},
 		},
 	}
 	g.Shooter = entities.Shooter{
