@@ -18,7 +18,7 @@ func main() {
 	width, height := term.Size()
 	g = game.Game{
 		Screen: assets.Screen{
-			Start: assets.Coordinate{X: 1, Y: 1},
+			Start: assets.Coordinate{X: 1, Y: 2},
 			End:   assets.Coordinate{X: width - 1, Y: height - 1},
 		},
 	}
