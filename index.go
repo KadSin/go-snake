@@ -29,7 +29,7 @@ func main() {
 			Color:     term.ColorYellow,
 			Screen:    g.Screen,
 		},
-		Blood: 10,
+		Blood: 5,
 	}
 
 	g.Start()

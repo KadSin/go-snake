@@ -81,7 +81,7 @@ func (game *Game) moveEnemies(t time.Time) {
 
 			e.Walk()
 			if e.Person.DoesHit(*e.Target) {
-				if game.Shooter.Blood > 1 {
+				if game.Shooter.Blood > 0 {
 					game.Shooter.Blood--
 
 					game.removeEnemy(e)
