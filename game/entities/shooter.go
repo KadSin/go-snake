@@ -8,6 +8,7 @@ type Shooter struct {
 	Person  Object
 	Speed   int
 	Bullets []*Object
+	Blood   int
 }
 
 func (shooter *Shooter) Shoot() {

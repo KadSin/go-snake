@@ -10,6 +10,7 @@ import (
 func (game *Game) render() {
 	game.drawEntities()
 
+	game.drawBlood()
 	game.drawWalls()
 
 	term.Flush()
@@ -25,6 +26,12 @@ func (game *Game) drawEntities() {
 
 	for _, enemy := range game.Enemies {
 		printObject(enemy.Person)
+	}
+}
+
+func (game *Game) drawBlood() {
+	for i := 0; i < game.Shooter.Blood; i++ {
+		term.SetCell(i, 0, '▅', term.ColorRed, term.ColorDefault)
 	}
 }
 
