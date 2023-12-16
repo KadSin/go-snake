@@ -30,9 +30,14 @@ func (game *Game) drawEntities() {
 }
 
 func (game *Game) drawBlood() {
-	for i := 0; i < game.Shooter.Blood; i++ {
-		term.SetCell(i, 0, '▅', term.ColorRed, term.ColorDefault)
+	states := []rune{'😖', '😨', '😐', '😀', '😄', '😁'}
+	state := states[game.Shooter.Blood]
+
+	if game.Shooter.Blood > len(states) {
+		state = '😇'
 	}
+
+	term.SetChar(1, 0, state)
 }
 
 func (game *Game) drawWalls() {
