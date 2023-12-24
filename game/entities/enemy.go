@@ -7,7 +7,7 @@ type Enemy struct {
 	OnKill func()
 }
 
-func (enemy *Enemy) Walk() {
+func (enemy *Enemy) Chase() {
 	if enemy.Target.Location.X > enemy.Person.Location.X {
 		enemy.Person.MoveRight()
 	} else if enemy.Target.Location.X < enemy.Person.Location.X {

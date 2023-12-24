@@ -15,10 +15,11 @@ func (game *Game) update() {
 			break
 		}
 
-		game.generateEnemies(t)
-
 		game.moveShooter(t)
+
+		game.generateEnemies(t)
 		game.moveEnemies(t)
+
 		game.moveBullets(t)
 
 		game.render()
@@ -79,7 +80,7 @@ func (game *Game) moveEnemies(t time.Time) {
 		if t.UnixMilli() > game.LastTimeActions.Enemies[e]+int64(e.Speed) {
 			game.LastTimeActions.Enemies[e] = t.UnixMilli()
 
-			e.Walk()
+			e.Chase()
 			if e.Person.DoesHit(*e.Target) {
 				if game.Shooter.Blood > 0 {
 					game.Shooter.Blood--
