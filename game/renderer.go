@@ -34,6 +34,10 @@ func (game *Game) drawEntities() {
 	}
 }
 
+func printObject(object entities.Object) {
+	term.SetCell(object.Location.X, object.Location.Y, object.Shape, object.Color, term.ColorDefault)
+}
+
 func (game *Game) drawTopBar() {
 	for i := game.Screen.Start.X - 1; i < game.Screen.End.X+1; i++ {
 		term.SetBg(i, game.Screen.Start.Y-2, term.ColorBlack)
@@ -42,17 +46,15 @@ func (game *Game) drawTopBar() {
 }
 
 func (game *Game) drawKilledEnemiesCount() {
-	killedEnemiesCount := strconv.FormatInt(int64(game.KilledEnemiesCount), 10)
-	x := game.Screen.End.X - len(killedEnemiesCount)
+	killedEnemiesCount := "💀" + strconv.FormatInt(int64(game.KilledEnemiesCount), 10)
 
-	print(
-		x,
-		game.Screen.Start.Y-2,
-		killedEnemiesCount,
-		term.ColorWhite,
-	)
-
-	term.SetChar(x-3, game.Screen.Start.Y-2, '💀')
+	content := Content{
+		Position:  assets.Coordinate{X: game.Screen.End.X, Y: game.Screen.Start.Y - 2},
+		Text:      killedEnemiesCount,
+		Alignment: ALIGNMENT_RIGHT,
+		Color:     term.ColorWhite,
+	}
+	content.Print()
 }
 
 func (game *Game) drawBlood() {
@@ -82,19 +84,4 @@ func (game *Game) drawWalls() {
 		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, term.ColorDefault)
 		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, term.ColorDefault)
 	}
-}
-
-func print(x int, y int, text string, color term.Attribute) {
-	for i := 0; i < len(text); i++ {
-		term.SetCell(
-			x+i, y,
-			rune(text[i]),
-			color,
-			term.GetCell(x+i, y).Bg,
-		)
-	}
-}
-
-func printObject(object entities.Object) {
-	term.SetCell(object.Location.X, object.Location.Y, object.Shape, object.Color, term.ColorDefault)
 }
