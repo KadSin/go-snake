@@ -8,10 +8,12 @@ import (
 )
 
 func (game *Game) render() {
+	game.drawWalls()
 	game.drawEntities()
 
+	game.drawTopBar()
 	game.drawBlood()
-	game.drawWalls()
+	game.drawState()
 
 	term.Flush()
 	term.Clear(term.ColorDefault, term.ColorDefault)
@@ -29,7 +31,20 @@ func (game *Game) drawEntities() {
 	}
 }
 
+func (game *Game) drawTopBar() {
+	for i := game.Screen.Start.X - 1; i < game.Screen.End.X+1; i++ {
+		term.SetBg(i, game.Screen.Start.Y-2, term.ColorBlack)
+		term.SetFg(i, game.Screen.Start.Y-2, term.ColorRed)
+	}
+}
+
 func (game *Game) drawBlood() {
+	for i := 0; i < game.Shooter.Blood*2; i += 2 {
+		term.SetChar(i+4, 0, '♥')
+	}
+}
+
+func (game *Game) drawState() {
 	states := []rune{'😖', '😨', '😐', '😀', '😄', '😁'}
 	state := states[game.Shooter.Blood]
 
