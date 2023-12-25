@@ -3,7 +3,9 @@ package game
 import (
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
+	"kadsin/shoot-run/game/interaction"
 	"strconv"
+	"strings"
 
 	term "github.com/nsf/termbox-go"
 )
@@ -14,7 +16,6 @@ func (game *Game) render() {
 	game.drawTopBar()
 	game.drawKilledEnemiesCount()
 	game.drawBlood()
-	game.drawState()
 
 	game.drawWalls()
 
@@ -41,37 +42,39 @@ func printObject(object entities.Object) {
 func (game *Game) drawTopBar() {
 	for i := game.Screen.Start.X - 1; i < game.Screen.End.X+1; i++ {
 		term.SetBg(i, game.Screen.Start.Y-2, term.ColorBlack)
-		term.SetFg(i, game.Screen.Start.Y-2, term.ColorRed)
 	}
 }
 
 func (game *Game) drawKilledEnemiesCount() {
 	killedEnemiesCount := "💀" + strconv.FormatInt(int64(game.KilledEnemiesCount), 10)
 
-	content := Content{
+	content := interaction.Content{
 		Position:  assets.Coordinate{X: game.Screen.End.X, Y: game.Screen.Start.Y - 2},
 		Text:      killedEnemiesCount,
-		Alignment: ALIGNMENT_RIGHT,
+		Alignment: interaction.ALIGNMENT_RIGHT,
 		Color:     term.ColorWhite,
 	}
 	content.Print()
 }
 
 func (game *Game) drawBlood() {
-	for i := 0; i < game.Shooter.Blood*2; i += 2 {
-		term.SetChar(i+4, 0, '♥')
+	content := interaction.Content{
+		Position: assets.Coordinate{X: game.Screen.Start.X, Y: game.Screen.Start.Y - 2},
+		Text:     game.state() + strings.Repeat("♥", game.Shooter.Blood),
+		Color:    term.ColorRed,
 	}
+	content.Print()
 }
 
-func (game *Game) drawState() {
-	states := []rune{'😖', '😨', '😐', '😀', '😄', '😁'}
-	state := states[game.Shooter.Blood]
+func (game *Game) state() string {
+	states := []string{"😖", "😨", "😐", "😀", "😄", "😁"}
 
 	if game.Shooter.Blood > len(states) {
-		state = '😇'
+		return "😇"
 	}
 
-	term.SetChar(1, 0, state)
+	return states[game.Shooter.Blood]
+
 }
 
 func (game *Game) drawWalls() {
