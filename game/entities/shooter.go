@@ -50,3 +50,13 @@ func (shooter *Shooter) RemoveBullet(bullet *Object) {
 		}
 	}
 }
+
+func (shooter *Shooter) State() string {
+	states := []string{"😖", "😨", "😐", "😀", "😄", "😁"}
+
+	if shooter.Blood > len(states) {
+		return "😇"
+	}
+
+	return states[shooter.Blood]
+}
