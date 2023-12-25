@@ -8,11 +8,12 @@ import (
 )
 
 type Game struct {
-	Screen          assets.Screen
-	Exited          bool
-	Shooter         entities.Shooter
-	Enemies         []*entities.Enemy
-	LastTimeActions LastActionAt
+	Screen             assets.Screen
+	Exited             bool
+	Shooter            entities.Shooter
+	Enemies            []*entities.Enemy
+	KilledEnemiesCount uint
+	LastTimeActions    LastActionAt
 }
 
 type LastActionAt struct {
