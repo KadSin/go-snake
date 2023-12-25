@@ -60,21 +60,10 @@ func (game *Game) drawKilledEnemiesCount() {
 func (game *Game) drawBlood() {
 	content := interaction.Content{
 		Position: assets.Coordinate{X: game.Screen.Start.X, Y: game.Screen.Start.Y - 2},
-		Text:     game.state() + strings.Repeat("♥", game.Shooter.Blood),
+		Text:     game.Shooter.State() + strings.Repeat("♥", game.Shooter.Blood),
 		Color:    term.ColorRed,
 	}
 	content.Print()
-}
-
-func (game *Game) state() string {
-	states := []string{"😖", "😨", "😐", "😀", "😄", "😁"}
-
-	if game.Shooter.Blood > len(states) {
-		return "😇"
-	}
-
-	return states[game.Shooter.Blood]
-
 }
 
 func (game *Game) drawWalls() {
