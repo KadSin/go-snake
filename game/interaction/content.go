@@ -1,4 +1,4 @@
-package game
+package interaction
 
 import (
 	"kadsin/shoot-run/game/assets"
