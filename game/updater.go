@@ -82,6 +82,8 @@ func (game *Game) moveEnemies() {
 
 					game.removeEnemy(e)
 				} else {
+					game.storyGameOver().Show()
+
 					game.Exited = true
 				}
 			}

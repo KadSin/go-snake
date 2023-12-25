@@ -24,6 +24,8 @@ type LastActionAt struct {
 }
 
 func (game *Game) Start() {
+	game.storyReady().Show()
+
 	game.LastTimeActions.Enemies = make(map[*entities.Enemy]int64)
 
 	game.Shooter.Speed = assets.SPEED_SHOOTER
