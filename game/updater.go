@@ -102,6 +102,8 @@ func (game *Game) moveBullets(t time.Time) {
 			game.Shooter.GoShot(b)
 
 			if game.anEnemyHitBy(b) {
+				game.KilledEnemiesCount++
+
 				game.Shooter.RemoveBullet(b)
 			}
 		}

@@ -3,17 +3,20 @@ package game
 import (
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
+	"strconv"
 
 	term "github.com/nsf/termbox-go"
 )
 
 func (game *Game) render() {
-	game.drawWalls()
 	game.drawEntities()
 
 	game.drawTopBar()
+	game.drawKilledEnemiesCount()
 	game.drawBlood()
 	game.drawState()
+
+	game.drawWalls()
 
 	term.Flush()
 	term.Clear(term.ColorDefault, term.ColorDefault)
@@ -36,6 +39,20 @@ func (game *Game) drawTopBar() {
 		term.SetBg(i, game.Screen.Start.Y-2, term.ColorBlack)
 		term.SetFg(i, game.Screen.Start.Y-2, term.ColorRed)
 	}
+}
+
+func (game *Game) drawKilledEnemiesCount() {
+	killedEnemiesCount := strconv.FormatInt(int64(game.KilledEnemiesCount), 10)
+	x := game.Screen.End.X - len(killedEnemiesCount)
+
+	print(
+		x,
+		game.Screen.Start.Y-2,
+		killedEnemiesCount,
+		term.ColorWhite,
+	)
+
+	term.SetChar(x-3, game.Screen.Start.Y-2, '💀')
 }
 
 func (game *Game) drawBlood() {
@@ -64,6 +81,17 @@ func (game *Game) drawWalls() {
 	for y := game.Screen.Start.Y - 1; y < game.Screen.End.Y+1; y++ {
 		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, term.ColorDefault)
 		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, term.ColorDefault)
+	}
+}
+
+func print(x int, y int, text string, color term.Attribute) {
+	for i := 0; i < len(text); i++ {
+		term.SetCell(
+			x+i, y,
+			rune(text[i]),
+			color,
+			term.GetCell(x+i, y).Bg,
+		)
 	}
 }
 
