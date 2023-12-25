@@ -2,6 +2,7 @@ package interaction
 
 import (
 	"kadsin/shoot-run/game/assets"
+	"strings"
 	"unicode/utf8"
 
 	term "github.com/nsf/termbox-go"
@@ -21,21 +22,36 @@ type Content struct {
 }
 
 func (content *Content) Print() {
+	texts := strings.Split(content.Text, "\n")
+
+	content.Position.Y -= len(texts) / 2
+	for _, t := range texts {
+		content.println(t)
+
+		content.Position.Y++
+	}
+}
+
+func (content Content) println(text string) {
+	x := content.Position.X
+
 	switch content.Alignment {
 	case ALIGNMENT_RIGHT:
-		content.Position.X -= len(content.Text)
+		x -= len(text)
 	case ALIGNMENT_CENTER:
-		content.Position.X -= len(content.Text) / 2
+		x -= len(text) / 2
 	}
 
-	for _, char := range []rune(content.Text) {
+	chars := []rune(text)
+
+	for _, char := range chars {
 		term.SetCell(
-			content.Position.X, content.Position.Y,
+			x, content.Position.Y,
 			rune(char),
 			content.Color,
-			term.GetCell(content.Position.X, content.Position.Y).Bg,
+			term.GetCell(x, content.Position.Y).Bg,
 		)
 
-		content.Position.X += utf8.RuneLen(char)
+		x += utf8.RuneLen(char)
 	}
 }
