@@ -20,10 +20,11 @@ type Story struct {
 }
 
 func (story Story) Show() {
+	term.Clear(term.ColorDefault, story.Background)
+
 	story.Content.Print()
 
 	term.Flush()
-	term.Clear(term.ColorDefault, story.Background)
 
 	if story.PassMethod == PASS_BY_KEY {
 		sleepUnlessKeyPressed(story.KeyToPass)
