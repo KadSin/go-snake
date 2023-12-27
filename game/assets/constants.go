@@ -11,7 +11,8 @@ const (
 )
 
 const (
-	COLOR_WALLS   = term.ColorGreen
-	COLOR_ENEMIES = term.ColorRed
-	COLOR_BULLETS = term.ColorLightGray
+	COLOR_WALLS      = term.ColorGreen
+	COLOR_ENEMIES    = term.ColorRed
+	COLOR_BULLETS    = term.ColorLightGray
+	COLOR_BACKGROUND = term.ColorBlack
 )
