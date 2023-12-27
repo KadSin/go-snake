@@ -14,6 +14,7 @@ func (game *Game) render() {
 	game.drawEntities()
 
 	game.drawTopBar()
+	game.drawScreenDifficulity()
 	game.drawKilledEnemiesCount()
 	game.drawBlood()
 
@@ -42,6 +43,33 @@ func printObject(object entities.Object) {
 func (game *Game) drawTopBar() {
 	for i := game.Screen.Start.X - 1; i < game.Screen.End.X+1; i++ {
 		term.SetBg(i, game.Screen.Start.Y-2, term.ColorBlack)
+	}
+}
+
+func (game *Game) drawScreenDifficulity() {
+	level, color := game.screenLevel()
+
+	content := interaction.Content{
+		Position:  assets.Coordinate{X: game.Screen.End.X / 2, Y: game.Screen.Start.Y - 2},
+		Text:      "Screen Level: " + level,
+		Alignment: interaction.ALIGNMENT_CENTER,
+		Color:     color,
+	}
+	content.Print()
+}
+
+func (game *Game) screenLevel() (string, term.Attribute) {
+	rectangleCircumference := 2*game.Screen.End.X + 2*game.Screen.End.Y
+
+	switch {
+	case rectangleCircumference > 400:
+		return "Easy", term.ColorLightGreen
+	case rectangleCircumference > 250:
+		return "Normal", term.ColorLightBlue
+	case rectangleCircumference > 150:
+		return "Hard", term.ColorLightRed
+	default:
+		return "Super Hard", term.ColorRed
 	}
 }
 
