@@ -49,3 +49,24 @@ func (game Game) storyByTtl(text string, seconds int, color term.Attribute) inte
 		SecondsToLive: seconds,
 	}
 }
+
+func (game Game) storyHelpAboutSpeedOfZombies() interaction.Story {
+	return game.storyByKey(
+		"🤵: If you kill more then more zombies will know you are here",
+		term.ColorLightRed,
+	)
+}
+
+func (game Game) storyByKey(text string, color term.Attribute) interaction.Story {
+	return interaction.Story{
+		Content: interaction.Content{
+			Text:      text + "\nPress [SPACE] to continue",
+			Position:  assets.Coordinate{X: game.Screen.End.X / 2, Y: game.Screen.End.Y / 2},
+			Alignment: interaction.ALIGNMENT_CENTER,
+			Color:     color,
+		},
+		Background: term.ColorBlack,
+		PassMethod: interaction.PASS_BY_KEY,
+		KeyToPass:  term.KeySpace,
+	}
+}
