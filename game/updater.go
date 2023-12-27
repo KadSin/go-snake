@@ -43,6 +43,11 @@ func (game *Game) generateEnemy() {
 			y = randomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
 		}
 
+		speed := randomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY) - int(game.KilledEnemiesCount)
+		if speed < 20 {
+			speed = 20
+		}
+
 		enemy := entities.Enemy{
 			Person: entities.Object{
 				Shape:    '#',
@@ -51,7 +56,7 @@ func (game *Game) generateEnemy() {
 				Color:    assets.COLOR_ENEMIES,
 			},
 			Target: &game.Shooter.Person,
-			Speed:  randomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
+			Speed:  speed,
 		}
 
 		game.Enemies = append(game.Enemies, &enemy)
@@ -97,6 +102,9 @@ func (game *Game) moveBullets() {
 			game.Shooter.GoShot(b)
 
 			if game.anEnemyHitBy(b) {
+				if game.KilledEnemiesCount == 3 {
+					game.storyHelpAboutSpeedOfZombies().Show()
+				}
 				game.KilledEnemiesCount++
 
 				game.Shooter.RemoveBullet(b)
