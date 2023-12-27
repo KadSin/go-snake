@@ -16,3 +16,7 @@ const (
 	COLOR_BULLETS    = term.ColorLightGray
 	COLOR_BACKGROUND = term.ColorBlack
 )
+
+const (
+	IMPACT_SHOOT_ON_ENEMY_GENERATING = 25
+)

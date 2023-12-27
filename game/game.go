@@ -21,6 +21,7 @@ type LastActionAt struct {
 	EnemyGenerator int64
 	Shooter        int64
 	Bullets        int64
+	Kill           int64
 }
 
 func (game *Game) Start() {
