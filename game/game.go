@@ -24,7 +24,7 @@ type LastActionAt struct {
 }
 
 func (game *Game) Start() {
-	game.storyReady().Show()
+	game.showStoryReady()
 
 	game.LastTimeActions.Enemies = make(map[*entities.Enemy]int64)
 
