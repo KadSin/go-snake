@@ -43,11 +43,6 @@ func (game *Game) generateEnemy() {
 			y = randomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
 		}
 
-		speed := randomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY) - int(game.KilledEnemiesCount)
-		if speed < 20 {
-			speed = 20
-		}
-
 		enemy := entities.Enemy{
 			Person: entities.Object{
 				Shape:    '#',
@@ -56,7 +51,7 @@ func (game *Game) generateEnemy() {
 				Color:    assets.COLOR_ENEMIES,
 			},
 			Target: &game.Shooter.Person,
-			Speed:  speed,
+			Speed:  randomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
 		}
 
 		game.Enemies = append(game.Enemies, &enemy)
@@ -107,6 +102,8 @@ func (game *Game) moveBullets() {
 				}
 				game.KilledEnemiesCount++
 
+				game.LastTimeActions.Kill = time.Now().UnixMilli()
+
 				game.Shooter.RemoveBullet(b)
 			}
 		}
@@ -142,12 +139,28 @@ func (game *Game) removeEnemy(enemy *entities.Enemy) {
 }
 
 func (game *Game) isTimeToGenerateEnemy() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(assets.SPEED_ENEMY_GENERATOR) {
+	if time.Now().UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(game.enemyGeneratorSpeed()) {
 		game.LastTimeActions.EnemyGenerator = time.Now().UnixMilli()
 		return true
 	}
 
 	return false
+}
+
+func (game *Game) enemyGeneratorSpeed() uint {
+	lastShootDiff := uint(time.Now().UnixMilli()-game.LastTimeActions.Kill) / 100
+	if lastShootDiff > 1000 {
+		return 1000
+	}
+
+	variant := game.KilledEnemiesCount*assets.IMPACT_SHOOT_ON_ENEMY_GENERATING - lastShootDiff
+	if variant > 800 {
+		return 200
+	}
+
+	speed := assets.SPEED_ENEMY_GENERATOR - variant
+
+	return speed
 }
 
 func (game *Game) isTimeToMoveShooter() bool {
