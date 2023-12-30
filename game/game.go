@@ -3,6 +3,7 @@ package game
 import (
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
+	"time"
 
 	term "github.com/nsf/termbox-go"
 )
@@ -14,6 +15,7 @@ type Game struct {
 	Enemies            []*entities.Enemy
 	KilledEnemiesCount uint
 	LastTimeActions    LastActionAt
+	StartedAt          int64
 }
 
 type LastActionAt struct {
@@ -26,6 +28,8 @@ type LastActionAt struct {
 
 func (game *Game) Start() {
 	game.showStoryReady()
+
+	game.StartedAt = time.Now().Unix()
 
 	game.LastTimeActions.Enemies = make(map[*entities.Enemy]int64)
 
