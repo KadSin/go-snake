@@ -19,6 +19,7 @@ func (game *Game) render() {
 	game.drawBlood()
 
 	game.drawWalls()
+	game.drawScreenTime()
 
 	term.Flush()
 	term.Clear(term.ColorDefault, assets.COLOR_BACKGROUND)
@@ -104,4 +105,14 @@ func (game *Game) drawWalls() {
 		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
 		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
 	}
+}
+
+func (game *Game) drawScreenTime() {
+	content := interaction.Content{
+		Position:  assets.Coordinate{X: game.Screen.End.X / 2, Y: game.Screen.Start.Y - 1},
+		Text:      game.ScreenTime(),
+		Color:     term.ColorWhite,
+		Alignment: interaction.ALIGNMENT_CENTER,
+	}
+	content.Print()
 }
