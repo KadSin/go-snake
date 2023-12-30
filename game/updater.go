@@ -12,6 +12,8 @@ func (game *Game) update() {
 
 	for range ticker.C {
 		if game.Exited {
+			game.storyShowScore().Show()
+
 			break
 		}
 
