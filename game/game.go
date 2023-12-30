@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
 	"time"
@@ -65,4 +66,13 @@ func (game *Game) listenToKeyboard() {
 			}
 		}
 	}
+}
+
+func (game Game) ScreenTime() string {
+	screenTime := time.Now().Unix() - game.StartedAt
+
+	minutes := screenTime / 60
+	seconds := screenTime % 60
+
+	return fmt.Sprintf("%02d:%02d", minutes, seconds)
 }
