@@ -3,7 +3,7 @@ package game
 import (
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
-	"math/rand"
+	"kadsin/shoot-run/game/helpers"
 	"time"
 )
 
@@ -36,13 +36,13 @@ func (game *Game) moveShooter() {
 
 func (game *Game) generateEnemy() {
 	if game.isTimeToGenerateEnemy() {
-		x := randomElement(game.Screen.Start.X, game.Screen.End.X)
-		y := randomElement(game.Screen.Start.Y, game.Screen.End.Y)
+		x := helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X)
+		y := helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y)
 
-		if rand.Float32() > 0.5 {
-			x = randomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
+		if helpers.RandomBoolean() {
+			x = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
 		} else {
-			y = randomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
+			y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
 		}
 
 		enemy := entities.Enemy{
@@ -53,24 +53,12 @@ func (game *Game) generateEnemy() {
 				Color:    assets.COLOR_ENEMIES,
 			},
 			Target: &game.Shooter.Person,
-			Speed:  randomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
+			Speed:  helpers.RandomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
 		}
 
 		game.Enemies = append(game.Enemies, &enemy)
 		game.LastTimeActions.Enemies[&enemy] = 0
 	}
-}
-
-func randomElement(first int, second int) int {
-	if rand.Float32() > 0.5 {
-		return first
-	} else {
-		return second
-	}
-}
-
-func randomNumberBetween(min int, max int) int {
-	return rand.Intn(max-min) + min
 }
 
 func (game *Game) moveEnemies() {

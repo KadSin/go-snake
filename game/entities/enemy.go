@@ -1,6 +1,8 @@
 package entities
 
-import "math/rand"
+import (
+	"kadsin/shoot-run/game/helpers"
+)
 
 type Enemy struct {
 	Person Object
@@ -10,8 +12,8 @@ type Enemy struct {
 }
 
 func (enemy *Enemy) Chase() {
-	canChaseTwoDirections := rand.Float32() > 0.5
-	canChaseVertical := rand.Float32() > 0.5
+	canChaseTwoDirections := helpers.RandomBoolean()
+	canChaseVertical := helpers.RandomBoolean()
 
 	if canChaseVertical || canChaseTwoDirections {
 		enemy.chaseVertical()
