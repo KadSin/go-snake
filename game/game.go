@@ -14,21 +14,23 @@ type Game struct {
 	Exited             bool
 	Shooter            entities.Shooter
 	Enemies            []*entities.Enemy
+	Blocks             []*entities.Object
 	KilledEnemiesCount uint
 	LastTimeActions    LastActionAt
 	StartedAt          int64
 }
 
 type LastActionAt struct {
-	Enemies        map[*entities.Enemy]int64
-	EnemyGenerator int64
-	Shooter        int64
-	Bullets        int64
-	Kill           int64
+	BlocksGenerator int64
+	Enemies         map[*entities.Enemy]int64
+	EnemyGenerator  int64
+	Shooter         int64
+	Bullets         int64
+	Kill            int64
 }
 
 func (game *Game) Start() {
-	game.showStoryReady()
+	// game.showStoryReady()
 
 	game.StartedAt = time.Now().Unix()
 

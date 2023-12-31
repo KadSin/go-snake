@@ -17,6 +17,8 @@ func (game *Game) update() {
 			break
 		}
 
+		game.generateBlocks()
+
 		game.moveShooter()
 
 		game.generateEnemy()
@@ -28,6 +30,46 @@ func (game *Game) update() {
 	}
 }
 
+func (game *Game) generateBlocks() {
+	if game.isTimeToGenerateBlocks() {
+		return
+	}
+
+	count := helpers.RandomNumberBetween(10, 15)
+
+	for i := 0; i < count; i++ {
+		size := helpers.RandomNumberBetween(3, 6)
+		location := assets.Coordinate{
+			X: helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X),
+			Y: helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y),
+		}
+
+		for j := 0; j < size; j++ {
+			isHorizontal := helpers.RandomBoolean()
+
+			shape := '█'
+			if isHorizontal {
+				shape = '▀'
+			}
+
+			block := entities.Object{
+				Shape:    shape,
+				Location: location,
+				Screen:   game.Screen,
+				Color:    assets.COLOR_WALLS,
+			}
+
+			if isHorizontal {
+				location.X++
+			} else {
+				location.Y++
+			}
+
+			game.Blocks = append(game.Blocks, &block)
+		}
+	}
+}
+
 func (game *Game) moveShooter() {
 	if game.isTimeToMoveShooter() {
 		game.Shooter.Person.UpdateLocation(1)
@@ -36,46 +78,50 @@ func (game *Game) moveShooter() {
 
 func (game *Game) generateEnemy() {
 	if game.isTimeToGenerateEnemy() {
-		x := helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X)
-		y := helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y)
-
-		if helpers.RandomBoolean() {
-			x = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
-		} else {
-			y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
-		}
-
-		enemy := entities.Enemy{
-			Person: entities.Object{
-				Shape:    '#',
-				Location: assets.Coordinate{X: x, Y: y},
-				Screen:   game.Screen,
-				Color:    assets.COLOR_ENEMIES,
-			},
-			Target: &game.Shooter.Person,
-			Speed:  helpers.RandomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
-		}
-
-		game.Enemies = append(game.Enemies, &enemy)
-		game.LastTimeActions.Enemies[&enemy] = 0
+		return
 	}
+
+	x := helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X)
+	y := helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y)
+
+	if helpers.RandomBoolean() {
+		x = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
+	} else {
+		y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
+	}
+
+	enemy := entities.Enemy{
+		Person: entities.Object{
+			Shape:    '#',
+			Location: assets.Coordinate{X: x, Y: y},
+			Screen:   game.Screen,
+			Color:    assets.COLOR_ENEMIES,
+		},
+		Target: &game.Shooter.Person,
+		Speed:  helpers.RandomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
+	}
+
+	game.Enemies = append(game.Enemies, &enemy)
+	game.LastTimeActions.Enemies[&enemy] = 0
 }
 
 func (game *Game) moveEnemies() {
 	for _, e := range game.Enemies {
 		if game.isTimeToMoveEnemy(e) {
-			e.Chase()
+			continue
+		}
 
-			if e.Person.DoesHit(*e.Target) {
-				if game.Shooter.Blood > 0 {
-					game.Shooter.Blood--
+		e.Chase()
 
-					game.removeEnemy(e)
-				} else {
-					game.storyGameOver().Show()
+		if e.Person.DoesHit(*e.Target) {
+			if game.Shooter.Blood > 0 {
+				game.Shooter.Blood--
 
-					game.Exited = true
-				}
+				game.removeEnemy(e)
+			} else {
+				game.storyGameOver().Show()
+
+				game.Exited = true
 			}
 		}
 	}
@@ -83,19 +129,21 @@ func (game *Game) moveEnemies() {
 
 func (game *Game) moveBullets() {
 	if game.isTimeToMoveBullet() {
-		for _, b := range game.Shooter.Bullets {
-			game.Shooter.GoShot(b)
+		return
+	}
 
-			if game.anEnemyHitBy(b) {
-				if game.KilledEnemiesCount == 3 {
-					game.storyHelpAboutSpeedOfZombies().Show()
-				}
-				game.KilledEnemiesCount++
+	for _, b := range game.Shooter.Bullets {
+		game.Shooter.GoShot(b)
 
-				game.LastTimeActions.Kill = time.Now().UnixMilli()
-
-				game.Shooter.RemoveBullet(b)
+		if game.anEnemyHitBy(b) {
+			if game.KilledEnemiesCount == 3 {
+				game.storyHelpAboutSpeedOfZombies().Show()
 			}
+			game.KilledEnemiesCount++
+
+			game.LastTimeActions.Kill = time.Now().UnixMilli()
+
+			game.Shooter.RemoveBullet(b)
 		}
 	}
 }
@@ -126,6 +174,15 @@ func (game *Game) removeEnemy(enemy *entities.Enemy) {
 			break
 		}
 	}
+}
+
+func (game *Game) isTimeToGenerateBlocks() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.BlocksGenerator+assets.SPEED_BLOCKS_GENERATOR {
+		game.LastTimeActions.BlocksGenerator = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
 }
 
 func (game *Game) isTimeToGenerateEnemy() bool {
