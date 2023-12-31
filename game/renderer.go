@@ -13,12 +13,13 @@ import (
 func (game *Game) render() {
 	game.drawEntities()
 
+	game.drawBlocks()
+	game.drawWalls()
+
 	game.drawTopBar()
 	game.drawScreenDifficulity()
 	game.drawKilledEnemiesCount()
 	game.drawBlood()
-
-	game.drawWalls()
 	game.drawScreenTime()
 
 	term.Flush()
@@ -37,8 +38,26 @@ func (game *Game) drawEntities() {
 	}
 }
 
+func (game *Game) drawBlocks() {
+	for _, block := range game.Blocks {
+		printObject(block)
+	}
+}
+
 func printObject(object entities.Object) {
 	term.SetCell(object.Location.X, object.Location.Y, object.Shape, object.Color, assets.COLOR_BACKGROUND)
+}
+
+func (game *Game) drawWalls() {
+	for x := game.Screen.Start.X - 1; x < game.Screen.End.X+1; x++ {
+		term.SetCell(x, game.Screen.Start.Y-1, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+		term.SetCell(x, game.Screen.End.Y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+	}
+
+	for y := game.Screen.Start.Y - 1; y < game.Screen.End.Y+1; y++ {
+		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+	}
 }
 
 func (game *Game) drawTopBar() {
@@ -93,18 +112,6 @@ func (game *Game) drawBlood() {
 		Color:    term.ColorRed,
 	}
 	content.Print()
-}
-
-func (game *Game) drawWalls() {
-	for x := game.Screen.Start.X - 1; x < game.Screen.End.X+1; x++ {
-		term.SetCell(x, game.Screen.Start.Y-1, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
-		term.SetCell(x, game.Screen.End.Y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
-	}
-
-	for y := game.Screen.Start.Y - 1; y < game.Screen.End.Y+1; y++ {
-		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
-		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
-	}
 }
 
 func (game *Game) drawScreenTime() {
