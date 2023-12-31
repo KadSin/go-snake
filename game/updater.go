@@ -31,7 +31,7 @@ func (game *Game) update() {
 }
 
 func (game *Game) generateBlocks() {
-	if game.isTimeToGenerateBlocks() {
+	if !game.isTimeToGenerateBlocks() {
 		return
 	}
 
@@ -70,14 +70,32 @@ func (game *Game) generateBlocks() {
 	}
 }
 
+func (game *Game) isTimeToGenerateBlocks() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.BlocksGenerator+assets.SPEED_BLOCKS_GENERATOR {
+		game.LastTimeActions.BlocksGenerator = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
 func (game *Game) moveShooter() {
 	if game.isTimeToMoveShooter() {
 		game.Shooter.Person.UpdateLocation(1)
 	}
 }
 
+func (game *Game) isTimeToMoveShooter() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
+		game.LastTimeActions.Shooter = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
 func (game *Game) generateEnemy() {
-	if game.isTimeToGenerateEnemy() {
+	if !game.isTimeToGenerateEnemy() {
 		return
 	}
 
@@ -105,9 +123,34 @@ func (game *Game) generateEnemy() {
 	game.LastTimeActions.Enemies[&enemy] = 0
 }
 
+func (game *Game) isTimeToGenerateEnemy() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(game.enemyGeneratorSpeed()) {
+		game.LastTimeActions.EnemyGenerator = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
+func (game *Game) enemyGeneratorSpeed() uint {
+	lastShootDiff := uint(time.Now().UnixMilli()-game.LastTimeActions.Kill) / 100
+	if lastShootDiff > 1000 {
+		return 1000
+	}
+
+	variant := game.KilledEnemiesCount*assets.IMPACT_SHOOT_ON_ENEMY_GENERATING - lastShootDiff
+	if variant > 800 {
+		return 200
+	}
+
+	speed := assets.SPEED_ENEMY_GENERATOR - variant
+
+	return speed
+}
+
 func (game *Game) moveEnemies() {
 	for _, e := range game.Enemies {
-		if game.isTimeToMoveEnemy(e) {
+		if !game.isTimeToMoveEnemy(e) {
 			continue
 		}
 
@@ -127,8 +170,17 @@ func (game *Game) moveEnemies() {
 	}
 }
 
+func (game *Game) isTimeToMoveEnemy(enemy *entities.Enemy) bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.Enemies[enemy]+int64(enemy.Speed) {
+		game.LastTimeActions.Enemies[enemy] = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
 func (game *Game) moveBullets() {
-	if game.isTimeToMoveBullet() {
+	if !game.isTimeToMoveBullet() {
 		return
 	}
 
@@ -146,6 +198,15 @@ func (game *Game) moveBullets() {
 			game.Shooter.RemoveBullet(b)
 		}
 	}
+}
+
+func (game *Game) isTimeToMoveBullet() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.Bullets+int64(assets.SPEED_BULLET) {
+		game.LastTimeActions.Bullets = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
 }
 
 func (game *Game) anEnemyHitBy(bullet *entities.Object) bool {
@@ -174,65 +235,4 @@ func (game *Game) removeEnemy(enemy *entities.Enemy) {
 			break
 		}
 	}
-}
-
-func (game *Game) isTimeToGenerateBlocks() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.BlocksGenerator+assets.SPEED_BLOCKS_GENERATOR {
-		game.LastTimeActions.BlocksGenerator = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
-}
-
-func (game *Game) isTimeToGenerateEnemy() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(game.enemyGeneratorSpeed()) {
-		game.LastTimeActions.EnemyGenerator = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
-}
-
-func (game *Game) enemyGeneratorSpeed() uint {
-	lastShootDiff := uint(time.Now().UnixMilli()-game.LastTimeActions.Kill) / 100
-	if lastShootDiff > 1000 {
-		return 1000
-	}
-
-	variant := game.KilledEnemiesCount*assets.IMPACT_SHOOT_ON_ENEMY_GENERATING - lastShootDiff
-	if variant > 800 {
-		return 200
-	}
-
-	speed := assets.SPEED_ENEMY_GENERATOR - variant
-
-	return speed
-}
-
-func (game *Game) isTimeToMoveShooter() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
-		game.LastTimeActions.Shooter = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
-}
-
-func (game *Game) isTimeToMoveEnemy(enemy *entities.Enemy) bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.Enemies[enemy]+int64(enemy.Speed) {
-		game.LastTimeActions.Enemies[enemy] = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
-}
-
-func (game *Game) isTimeToMoveBullet() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.Bullets+int64(assets.SPEED_BULLET) {
-		game.LastTimeActions.Bullets = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
 }
