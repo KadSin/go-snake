@@ -14,7 +14,7 @@ type Game struct {
 	Exited             bool
 	Shooter            entities.Shooter
 	Enemies            []*entities.Enemy
-	Blocks             []*entities.Object
+	Blocks             []entities.Object
 	KilledEnemiesCount uint
 	LastTimeActions    LastActionAt
 	StartedAt          int64

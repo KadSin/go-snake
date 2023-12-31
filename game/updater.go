@@ -35,6 +35,8 @@ func (game *Game) generateBlocks() {
 		return
 	}
 
+	game.Blocks = []entities.Object{}
+
 	count := helpers.RandomNumberBetween(10, 15)
 
 	for i := 0; i < count; i++ {
@@ -65,7 +67,7 @@ func (game *Game) generateBlocks() {
 				location.Y++
 			}
 
-			game.Blocks = append(game.Blocks, &block)
+			game.Blocks = append(game.Blocks, block)
 		}
 	}
 }
