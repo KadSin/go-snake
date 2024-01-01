@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
 	"slices"
@@ -40,4 +41,8 @@ func (game *Game) removeEnemy(enemy *entities.Enemy) {
 
 func (game *Game) EventCollisionBlockByBullet(block *entities.Object, bullet *entities.Object) {
 	game.Shooter.RemoveBullet(bullet)
+}
+
+func (game *Game) EventCollisionBlockByShooter(block *entities.Object) error {
+	return errors.New("Shooter should stop")
 }

@@ -23,30 +23,38 @@ type Object struct {
 }
 
 func (object *Object) UpdateLocation(step int) error {
+	nextStep := object.NextStep(step)
+
+	if nextStep == object.Location {
+		return errors.New("Object exceeds the boundary")
+	} else {
+		object.Location = nextStep
+
+		return nil
+	}
+}
+
+func (object Object) NextStep(step int) assets.Coordinate {
 	switch object.Direction {
 	case DIRECTION_UP:
 		if object.Location.Y-step >= object.Screen.Start.Y {
 			object.Location.Y -= step
-			return nil
 		}
 	case DIRECTION_RIGHT:
 		if object.Location.X+step < object.Screen.End.X {
 			object.Location.X += step
-			return nil
 		}
 	case DIRECTION_DOWN:
 		if object.Location.Y+step < object.Screen.End.Y {
 			object.Location.Y += step
-			return nil
 		}
 	case DIRECTION_LEFT:
 		if object.Location.X-step >= object.Screen.Start.X {
 			object.Location.X -= step
-			return nil
 		}
 	}
 
-	return errors.New("Object exceeds the boundary")
+	return object.Location
 }
 
 func (object *Object) MoveUp() {

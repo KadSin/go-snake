@@ -80,8 +80,26 @@ func (game *Game) isTimeToGenerateBlocks() bool {
 
 func (game *Game) moveShooter() {
 	if game.isTimeToMoveShooter() {
+		if block := game.isShooterBehindOfBlock(); block != nil {
+			event := game.EventCollisionBlockByShooter(block)
+
+			if event != nil {
+				return
+			}
+		}
+
 		game.Shooter.Person.UpdateLocation(1)
 	}
+}
+
+func (game *Game) isShooterBehindOfBlock() *entities.Object {
+	for _, block := range game.Blocks {
+		if game.Shooter.Person.NextStep(1) == block.Location {
+			return &block
+		}
+	}
+
+	return nil
 }
 
 func (game *Game) isTimeToMoveShooter() bool {
@@ -167,7 +185,7 @@ func (game *Game) moveBullets() {
 	}
 
 	for _, b := range game.Shooter.Bullets {
-		if block := game.bulletIsBehindOfBlock(b); block != nil {
+		if block := game.isBulletBehindOfBlock(b); block != nil {
 			game.EventCollisionBlockByBullet(block, b)
 		}
 
@@ -188,7 +206,7 @@ func (game *Game) isTimeToMoveBullet() bool {
 	return false
 }
 
-func (game *Game) bulletIsBehindOfBlock(bullet *entities.Object) *entities.Object {
+func (game *Game) isBulletBehindOfBlock(bullet *entities.Object) *entities.Object {
 	for _, block := range game.Blocks {
 		if bullet.DoesHit(block) {
 			return &block
