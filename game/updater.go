@@ -41,10 +41,7 @@ func (game *Game) generateBlocks() {
 
 	for i := 0; i < count; i++ {
 		size := helpers.RandomNumberBetween(3, 6)
-		location := assets.Coordinate{
-			X: helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X),
-			Y: helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y),
-		}
+		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
 
 		for j := 0; j < size; j++ {
 			isHorizontal := helpers.RandomBoolean()
@@ -104,7 +101,7 @@ func (game *Game) generateEnemy() {
 	enemy := entities.Enemy{
 		Person: entities.Object{
 			Shape:    '#',
-			Location: game.randomCoordinate(),
+			Location: helpers.RandomCoordinateOnBorders(game.Screen),
 			Screen:   game.Screen,
 			Color:    assets.COLOR_ENEMIES,
 		},
@@ -139,21 +136,6 @@ func (game *Game) enemyGeneratorSpeed() uint {
 	speed := assets.SPEED_ENEMY_GENERATOR - variant
 
 	return speed
-}
-
-func (game *Game) randomCoordinate() assets.Coordinate {
-	coordinate := assets.Coordinate{
-		X: helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X),
-		Y: helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y),
-	}
-
-	if helpers.RandomBoolean() {
-		coordinate.X = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
-	} else {
-		coordinate.Y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
-	}
-
-	return coordinate
 }
 
 func (game *Game) moveEnemies() {
