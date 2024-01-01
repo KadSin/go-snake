@@ -101,19 +101,10 @@ func (game *Game) generateEnemy() {
 		return
 	}
 
-	x := helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X)
-	y := helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y)
-
-	if helpers.RandomBoolean() {
-		x = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
-	} else {
-		y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
-	}
-
 	enemy := entities.Enemy{
 		Person: entities.Object{
 			Shape:    '#',
-			Location: assets.Coordinate{X: x, Y: y},
+			Location: game.randomCoordinate(),
 			Screen:   game.Screen,
 			Color:    assets.COLOR_ENEMIES,
 		},
@@ -150,6 +141,21 @@ func (game *Game) enemyGeneratorSpeed() uint {
 	return speed
 }
 
+func (game *Game) randomCoordinate() assets.Coordinate {
+	coordinate := assets.Coordinate{
+		X: helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X),
+		Y: helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y),
+	}
+
+	if helpers.RandomBoolean() {
+		coordinate.X = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
+	} else {
+		coordinate.Y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
+	}
+
+	return coordinate
+}
+
 func (game *Game) moveEnemies() {
 	for _, e := range game.Enemies {
 		if !game.isTimeToMoveEnemy(e) {
@@ -159,15 +165,7 @@ func (game *Game) moveEnemies() {
 		e.Chase()
 
 		if e.Person.DoesHit(*e.Target) {
-			if game.Shooter.Blood > 0 {
-				game.Shooter.Blood--
-
-				game.removeEnemy(e)
-			} else {
-				game.storyGameOver().Show()
-
-				game.Exited = true
-			}
+			game.EventCollisionShooterByEnemy(e)
 		}
 	}
 }
@@ -189,15 +187,8 @@ func (game *Game) moveBullets() {
 	for _, b := range game.Shooter.Bullets {
 		game.Shooter.GoShot(b)
 
-		if game.anEnemyHitBy(b) {
-			if game.KilledEnemiesCount == 3 {
-				game.storyHelpAboutSpeedOfZombies().Show()
-			}
-			game.KilledEnemiesCount++
-
-			game.LastTimeActions.Kill = time.Now().UnixMilli()
-
-			game.Shooter.RemoveBullet(b)
+		if enemy := game.anEnemyHitBy(b); enemy != nil {
+			game.EventCollisionEnemyByBullet(enemy, b)
 		}
 	}
 }
@@ -211,30 +202,12 @@ func (game *Game) isTimeToMoveBullet() bool {
 	return false
 }
 
-func (game *Game) anEnemyHitBy(bullet *entities.Object) bool {
+func (game *Game) anEnemyHitBy(bullet *entities.Object) *entities.Enemy {
 	for _, e := range game.Enemies {
 		if bullet.DoesHit(e.Person) {
-			game.removeEnemy(e)
-
-			return true
+			return e
 		}
 	}
 
-	return false
-}
-
-func (game *Game) removeEnemy(enemy *entities.Enemy) {
-	for id, e := range game.Enemies {
-		if e == enemy {
-			if id == 0 {
-				game.Enemies = game.Enemies[id+1:]
-			} else if id == len(game.Enemies)-1 {
-				game.Enemies = game.Enemies[:id-1]
-			} else {
-				game.Enemies = append(game.Enemies[:id], game.Enemies[id+1:]...)
-			}
-
-			break
-		}
-	}
+	return nil
 }
