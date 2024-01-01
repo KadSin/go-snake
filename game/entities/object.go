@@ -8,18 +8,19 @@ import (
 )
 
 const (
-	DIRECTION_UP = iota
+	DIRECTION_UP = iota + 1
 	DIRECTION_RIGHT
 	DIRECTION_DOWN
 	DIRECTION_LEFT
 )
 
 type Object struct {
-	Location  assets.Coordinate
-	Screen    assets.Screen
-	Shape     rune
-	Direction uint8
-	Color     term.Attribute
+	Location            assets.Coordinate
+	Screen              assets.Screen
+	Shape               rune
+	Direction           uint8
+	AdditionalDirection uint8
+	Color               term.Attribute
 }
 
 func (object *Object) UpdateLocation(step int) error {
@@ -35,7 +36,14 @@ func (object *Object) UpdateLocation(step int) error {
 }
 
 func (object Object) NextStep(step int) assets.Coordinate {
-	switch object.Direction {
+	object.Location = object.refineNextStepByDirection(object.Direction, step)
+	object.Location = object.refineNextStepByDirection(object.AdditionalDirection, step)
+
+	return object.Location
+}
+
+func (object Object) refineNextStepByDirection(direction uint8, step int) assets.Coordinate {
+	switch direction {
 	case DIRECTION_UP:
 		if object.Location.Y-step >= object.Screen.Start.Y {
 			object.Location.Y -= step
@@ -71,6 +79,22 @@ func (object *Object) MoveDown() {
 
 func (object *Object) MoveLeft() {
 	object.Direction = DIRECTION_LEFT
+}
+
+func (object *Object) AdditionalMoveUp() {
+	object.AdditionalDirection = DIRECTION_UP
+}
+
+func (object *Object) AdditionalMoveRight() {
+	object.AdditionalDirection = DIRECTION_RIGHT
+}
+
+func (object *Object) AdditionalMoveDown() {
+	object.AdditionalDirection = DIRECTION_DOWN
+}
+
+func (object *Object) AdditionalMoveLeft() {
+	object.AdditionalDirection = DIRECTION_LEFT
 }
 
 func (object *Object) DoesHit(target Object) bool {

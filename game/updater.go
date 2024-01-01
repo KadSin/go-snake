@@ -92,6 +92,15 @@ func (game *Game) moveShooter() {
 	}
 }
 
+func (game *Game) isTimeToMoveShooter() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
+		game.LastTimeActions.Shooter = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
 func (game *Game) isShooterBehindOfBlock() *entities.Object {
 	for _, block := range game.Blocks {
 		if game.Shooter.Person.NextStep(1) == block.Location {
@@ -100,15 +109,6 @@ func (game *Game) isShooterBehindOfBlock() *entities.Object {
 	}
 
 	return nil
-}
-
-func (game *Game) isTimeToMoveShooter() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
-		game.LastTimeActions.Shooter = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
 }
 
 func (game *Game) generateEnemy() {
@@ -162,7 +162,17 @@ func (game *Game) moveEnemies() {
 			continue
 		}
 
-		e.Chase()
+		e.LookAtTarget()
+
+		if block := game.isEnemyBehindOfBlock(e); block != nil {
+			event := game.EventCollisionBlockByEnemy(block, e)
+
+			if event != nil {
+				continue
+			}
+		}
+
+		e.Person.UpdateLocation(1)
 
 		if e.Person.DoesHit(*e.Target) {
 			game.EventCollisionShooterByEnemy(e)
@@ -177,6 +187,16 @@ func (game *Game) isTimeToMoveEnemy(enemy *entities.Enemy) bool {
 	}
 
 	return false
+}
+
+func (game *Game) isEnemyBehindOfBlock(e *entities.Enemy) *entities.Object {
+	for _, block := range game.Blocks {
+		if e.Person.NextStep(1) == block.Location {
+			return &block
+		}
+	}
+
+	return nil
 }
 
 func (game *Game) moveBullets() {

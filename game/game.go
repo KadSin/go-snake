@@ -30,7 +30,7 @@ type LastActionAt struct {
 }
 
 func (game *Game) Start() {
-	// game.showStoryReady()
+	game.showStoryReady()
 
 	game.StartedAt = time.Now().Unix()
 

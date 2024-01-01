@@ -46,3 +46,7 @@ func (game *Game) EventCollisionBlockByBullet(block *entities.Object, bullet *en
 func (game *Game) EventCollisionBlockByShooter(block *entities.Object) error {
 	return errors.New("Shooter should stop")
 }
+
+func (game *Game) EventCollisionBlockByEnemy(block *entities.Object, enemy *entities.Enemy) error {
+	return errors.New("Enemy should stop")
+}

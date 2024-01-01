@@ -11,35 +11,31 @@ type Enemy struct {
 	OnKill func()
 }
 
-func (enemy *Enemy) Chase() {
+func (enemy *Enemy) LookAtTarget() {
 	canChaseTwoDirections := helpers.RandomBoolean()
 	canChaseVertical := helpers.RandomBoolean()
 
 	if canChaseVertical || canChaseTwoDirections {
-		enemy.chaseVertical()
+		enemy.setVerticalDirection()
 	}
 
 	if !canChaseVertical || canChaseTwoDirections {
-		enemy.chaseHorizontal()
+		enemy.setHorizontalDirection()
 	}
 }
 
-func (enemy *Enemy) chaseVertical() {
+func (enemy *Enemy) setVerticalDirection() {
 	if enemy.Target.Location.Y > enemy.Person.Location.Y {
 		enemy.Person.MoveDown()
 	} else if enemy.Target.Location.Y < enemy.Person.Location.Y {
 		enemy.Person.MoveUp()
 	}
-
-	enemy.Person.UpdateLocation(1)
 }
 
-func (enemy *Enemy) chaseHorizontal() {
+func (enemy *Enemy) setHorizontalDirection() {
 	if enemy.Target.Location.X > enemy.Person.Location.X {
-		enemy.Person.MoveRight()
+		enemy.Person.AdditionalMoveRight()
 	} else if enemy.Target.Location.X < enemy.Person.Location.X {
-		enemy.Person.MoveLeft()
+		enemy.Person.AdditionalMoveLeft()
 	}
-
-	enemy.Person.UpdateLocation(1)
 }
