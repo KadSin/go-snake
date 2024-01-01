@@ -17,6 +17,8 @@ func (game *Game) update() {
 			break
 		}
 
+		game.generateBlocks()
+
 		game.moveShooter()
 
 		game.generateEnemy()
@@ -28,104 +30,105 @@ func (game *Game) update() {
 	}
 }
 
-func (game *Game) moveShooter() {
-	if game.isTimeToMoveShooter() {
-		game.Shooter.Person.UpdateLocation(1)
+func (game *Game) generateBlocks() {
+	if !game.isTimeToGenerateBlocks() {
+		return
 	}
-}
 
-func (game *Game) generateEnemy() {
-	if game.isTimeToGenerateEnemy() {
-		x := helpers.RandomIntElement(game.Screen.Start.X, game.Screen.End.X)
-		y := helpers.RandomIntElement(game.Screen.Start.Y, game.Screen.End.Y)
+	game.Blocks = []entities.Object{}
 
-		if helpers.RandomBoolean() {
-			x = helpers.RandomNumberBetween(game.Screen.Start.X, game.Screen.End.X)
-		} else {
-			y = helpers.RandomNumberBetween(game.Screen.Start.Y, game.Screen.End.Y)
-		}
+	count := helpers.RandomNumberBetween(10, 15)
 
-		enemy := entities.Enemy{
-			Person: entities.Object{
-				Shape:    '#',
-				Location: assets.Coordinate{X: x, Y: y},
+	for i := 0; i < count; i++ {
+		size := helpers.RandomNumberBetween(3, 6)
+		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
+
+		for j := 0; j < size; j++ {
+			isHorizontal := helpers.RandomBoolean()
+
+			shape := '█'
+			if isHorizontal {
+				shape = '▀'
+			}
+
+			block := entities.Object{
+				Shape:    shape,
+				Location: location,
 				Screen:   game.Screen,
-				Color:    assets.COLOR_ENEMIES,
-			},
-			Target: &game.Shooter.Person,
-			Speed:  helpers.RandomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
-		}
-
-		game.Enemies = append(game.Enemies, &enemy)
-		game.LastTimeActions.Enemies[&enemy] = 0
-	}
-}
-
-func (game *Game) moveEnemies() {
-	for _, e := range game.Enemies {
-		if game.isTimeToMoveEnemy(e) {
-			e.Chase()
-
-			if e.Person.DoesHit(*e.Target) {
-				if game.Shooter.Blood > 0 {
-					game.Shooter.Blood--
-
-					game.removeEnemy(e)
-				} else {
-					game.storyGameOver().Show()
-
-					game.Exited = true
-				}
+				Color:    assets.COLOR_WALLS,
 			}
-		}
-	}
-}
 
-func (game *Game) moveBullets() {
-	if game.isTimeToMoveBullet() {
-		for _, b := range game.Shooter.Bullets {
-			game.Shooter.GoShot(b)
-
-			if game.anEnemyHitBy(b) {
-				if game.KilledEnemiesCount == 3 {
-					game.storyHelpAboutSpeedOfZombies().Show()
-				}
-				game.KilledEnemiesCount++
-
-				game.LastTimeActions.Kill = time.Now().UnixMilli()
-
-				game.Shooter.RemoveBullet(b)
+			if isHorizontal {
+				location.X++
+			} else {
+				location.Y++
 			}
+
+			game.Blocks = append(game.Blocks, block)
 		}
 	}
 }
 
-func (game *Game) anEnemyHitBy(bullet *entities.Object) bool {
-	for _, e := range game.Enemies {
-		if bullet.DoesHit(e.Person) {
-			game.removeEnemy(e)
-
-			return true
-		}
+func (game *Game) isTimeToGenerateBlocks() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.BlocksGenerator+assets.SPEED_BLOCKS_GENERATOR {
+		game.LastTimeActions.BlocksGenerator = time.Now().UnixMilli()
+		return true
 	}
 
 	return false
 }
 
-func (game *Game) removeEnemy(enemy *entities.Enemy) {
-	for id, e := range game.Enemies {
-		if e == enemy {
-			if id == 0 {
-				game.Enemies = game.Enemies[id+1:]
-			} else if id == len(game.Enemies)-1 {
-				game.Enemies = game.Enemies[:id-1]
-			} else {
-				game.Enemies = append(game.Enemies[:id], game.Enemies[id+1:]...)
-			}
+func (game *Game) moveShooter() {
+	if game.isTimeToMoveShooter() {
+		if block := game.isShooterBehindOfBlock(); block != nil {
+			event := game.EventCollisionBlockByShooter(block)
 
-			break
+			if event != nil {
+				return
+			}
+		}
+
+		game.Shooter.Person.UpdateLocation(1)
+	}
+}
+
+func (game *Game) isTimeToMoveShooter() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
+		game.LastTimeActions.Shooter = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
+func (game *Game) isShooterBehindOfBlock() *entities.Object {
+	for _, block := range game.Blocks {
+		if game.Shooter.Person.NextStep(1) == block.Location {
+			return &block
 		}
 	}
+
+	return nil
+}
+
+func (game *Game) generateEnemy() {
+	if !game.isTimeToGenerateEnemy() {
+		return
+	}
+
+	enemy := entities.Enemy{
+		Person: entities.Object{
+			Shape:    '#',
+			Location: helpers.RandomCoordinateOnBorders(game.Screen),
+			Screen:   game.Screen,
+			Color:    assets.COLOR_ENEMIES,
+		},
+		Target: &game.Shooter.Person,
+		Speed:  helpers.RandomNumberBetween(assets.SPEED_MIN_ENEMY, assets.SPEED_MAX_ENEMY),
+	}
+
+	game.Enemies = append(game.Enemies, &enemy)
+	game.LastTimeActions.Enemies[&enemy] = 0
 }
 
 func (game *Game) isTimeToGenerateEnemy() bool {
@@ -153,13 +156,28 @@ func (game *Game) enemyGeneratorSpeed() uint {
 	return speed
 }
 
-func (game *Game) isTimeToMoveShooter() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.Shooter+int64(game.Shooter.Speed) {
-		game.LastTimeActions.Shooter = time.Now().UnixMilli()
-		return true
-	}
+func (game *Game) moveEnemies() {
+	for _, e := range game.Enemies {
+		if !game.isTimeToMoveEnemy(e) {
+			continue
+		}
 
-	return false
+		e.LookAtTarget()
+
+		if block := game.isEnemyBehindOfBlock(e); block != nil {
+			event := game.EventCollisionBlockByEnemy(block, e)
+
+			if event != nil {
+				continue
+			}
+		}
+
+		e.Person.UpdateLocation(1)
+
+		if e.Person.DoesHit(*e.Target) {
+			game.EventCollisionShooterByEnemy(e)
+		}
+	}
 }
 
 func (game *Game) isTimeToMoveEnemy(enemy *entities.Enemy) bool {
@@ -171,6 +189,34 @@ func (game *Game) isTimeToMoveEnemy(enemy *entities.Enemy) bool {
 	return false
 }
 
+func (game *Game) isEnemyBehindOfBlock(e *entities.Enemy) *entities.Object {
+	for _, block := range game.Blocks {
+		if e.Person.NextStep(1) == block.Location {
+			return &block
+		}
+	}
+
+	return nil
+}
+
+func (game *Game) moveBullets() {
+	if !game.isTimeToMoveBullet() {
+		return
+	}
+
+	for _, b := range game.Shooter.Bullets {
+		if block := game.isBulletBehindOfBlock(b); block != nil {
+			game.EventCollisionBlockByBullet(block, b)
+		}
+
+		game.Shooter.GoShot(b)
+
+		if enemy := game.anEnemyHitBy(b); enemy != nil {
+			game.EventCollisionEnemyByBullet(enemy, b)
+		}
+	}
+}
+
 func (game *Game) isTimeToMoveBullet() bool {
 	if time.Now().UnixMilli() > game.LastTimeActions.Bullets+int64(assets.SPEED_BULLET) {
 		game.LastTimeActions.Bullets = time.Now().UnixMilli()
@@ -178,4 +224,24 @@ func (game *Game) isTimeToMoveBullet() bool {
 	}
 
 	return false
+}
+
+func (game *Game) isBulletBehindOfBlock(bullet *entities.Object) *entities.Object {
+	for _, block := range game.Blocks {
+		if bullet.DoesHit(block) {
+			return &block
+		}
+	}
+
+	return nil
+}
+
+func (game *Game) anEnemyHitBy(bullet *entities.Object) *entities.Enemy {
+	for _, e := range game.Enemies {
+		if bullet.DoesHit(e.Person) {
+			return e
+		}
+	}
+
+	return nil
 }
