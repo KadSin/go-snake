@@ -2,6 +2,7 @@ package entities
 
 import (
 	"kadsin/shoot-run/game/assets"
+	"slices"
 )
 
 type Shooter struct {
@@ -34,21 +35,10 @@ func (shooter *Shooter) GoShot(bullet *Object) {
 }
 
 func (shooter *Shooter) RemoveBullet(bullet *Object) {
-	for id, b := range shooter.Bullets {
-		if b == bullet {
-			shooter.Bullets[id] = nil
-
-			if id == 0 {
-				shooter.Bullets = shooter.Bullets[id+1:]
-			} else if id == len(shooter.Bullets)-1 {
-				shooter.Bullets = shooter.Bullets[:id-1]
-			} else {
-				shooter.Bullets = append(shooter.Bullets[:id], shooter.Bullets[id+1:]...)
-			}
-
-			break
-		}
-	}
+	shooter.Bullets = slices.DeleteFunc[[]*Object, *Object](
+		shooter.Bullets,
+		func(b *Object) bool { return b == bullet },
+	)
 }
 
 func (shooter *Shooter) State() string {
