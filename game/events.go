@@ -3,6 +3,7 @@ package game
 import (
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
+	"slices"
 	"time"
 )
 
@@ -31,17 +32,8 @@ func (game *Game) EventCollisionEnemyByBullet(enemy *entities.Enemy, bullet *ent
 }
 
 func (game *Game) removeEnemy(enemy *entities.Enemy) {
-	for id, e := range game.Enemies {
-		if e == enemy {
-			if id == 0 {
-				game.Enemies = game.Enemies[id+1:]
-			} else if id == len(game.Enemies)-1 {
-				game.Enemies = game.Enemies[:id-1]
-			} else {
-				game.Enemies = append(game.Enemies[:id], game.Enemies[id+1:]...)
-			}
-
-			break
-		}
-	}
+	game.Enemies = slices.DeleteFunc[[]*entities.Enemy, *entities.Enemy](
+		game.Enemies,
+		func(e *entities.Enemy) bool { return e == enemy },
+	)
 }
