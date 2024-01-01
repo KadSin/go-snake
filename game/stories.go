@@ -73,13 +73,13 @@ func (game Game) storyShowScore() interaction.Story {
 func (game Game) storyByKey(text string, color term.Attribute) interaction.Story {
 	return interaction.Story{
 		Content: interaction.Content{
-			Text:      text + "\n\nPress [SPACE] to continue",
+			Text:      text + "\n\nPress [Enter] to continue",
 			Position:  assets.Coordinate{X: game.Screen.End.X / 2, Y: game.Screen.End.Y / 2},
 			Alignment: interaction.ALIGNMENT_CENTER,
 			Color:     color,
 		},
 		Background: term.ColorBlack,
 		PassMethod: interaction.PASS_BY_KEY,
-		KeyToPass:  term.KeySpace,
+		KeyToPass:  term.KeyEnter,
 	}
 }
