@@ -167,6 +167,10 @@ func (game *Game) moveBullets() {
 	}
 
 	for _, b := range game.Shooter.Bullets {
+		if block := game.bulletIsBehindOfBlock(b); block != nil {
+			game.EventCollisionBlockByBullet(block, b)
+		}
+
 		game.Shooter.GoShot(b)
 
 		if enemy := game.anEnemyHitBy(b); enemy != nil {
@@ -182,6 +186,16 @@ func (game *Game) isTimeToMoveBullet() bool {
 	}
 
 	return false
+}
+
+func (game *Game) bulletIsBehindOfBlock(bullet *entities.Object) *entities.Object {
+	for _, block := range game.Blocks {
+		if bullet.DoesHit(block) {
+			return &block
+		}
+	}
+
+	return nil
 }
 
 func (game *Game) anEnemyHitBy(bullet *entities.Object) *entities.Enemy {

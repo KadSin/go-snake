@@ -37,3 +37,7 @@ func (game *Game) removeEnemy(enemy *entities.Enemy) {
 		func(e *entities.Enemy) bool { return e == enemy },
 	)
 }
+
+func (game *Game) EventCollisionBlockByBullet(block *entities.Object, bullet *entities.Object) {
+	game.Shooter.RemoveBullet(bullet)
+}
