@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/interaction"
+	"time"
 
 	term "github.com/nsf/termbox-go"
 )
@@ -59,12 +60,15 @@ func (game Game) storyHelpAboutSpeedOfZombies() interaction.Story {
 }
 
 func (game Game) storyShowScore() interaction.Story {
+	rectangleCircumference := game.ScreenCircumference()
+	score := (time.Now().Unix() - game.StartedAt) * int64(game.KilledEnemiesCount) / int64(rectangleCircumference/10)
+
 	level, _ := game.screenLevel()
 
 	return game.storyByKey(
 		fmt.Sprintf(
-			"Screen Level: %v\nTotal Killed: %v\nLife time: %v",
-			level, game.KilledEnemiesCount, game.ScreenTime(),
+			"Score: %v\n\nScreen Level: %v\nTotal Killed: %v\nLife time: %v",
+			score, level, game.KilledEnemiesCount, game.ScreenTime(),
 		),
 		term.ColorWhite,
 	)

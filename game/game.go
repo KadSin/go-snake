@@ -78,3 +78,7 @@ func (game Game) ScreenTime() string {
 
 	return fmt.Sprintf("%02d:%02d", minutes, seconds)
 }
+
+func (game *Game) ScreenCircumference() int {
+	return 2*game.Screen.End.X + 2*game.Screen.End.Y
+}

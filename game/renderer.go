@@ -79,7 +79,7 @@ func (game *Game) drawScreenDifficulity() {
 }
 
 func (game *Game) screenLevel() (string, term.Attribute) {
-	rectangleCircumference := 2*game.Screen.End.X + 2*game.Screen.End.Y
+	rectangleCircumference := game.ScreenCircumference()
 
 	switch {
 	case rectangleCircumference > 400:
