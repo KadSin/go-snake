@@ -40,7 +40,7 @@ func (game *Game) generateBlocks() {
 	count := helpers.RandomNumberBetween(10, 15)
 
 	for i := 0; i < count; i++ {
-		size := helpers.RandomNumberBetween(3, 6)
+		size := helpers.RandomNumberBetween(5, 10)
 		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
 
 		for j := 0; j < size; j++ {
@@ -142,8 +142,8 @@ func (game *Game) isTimeToGenerateEnemy() bool {
 
 func (game *Game) enemyGeneratorSpeed() uint {
 	lastShootDiff := uint(time.Now().UnixMilli()-game.LastTimeActions.Kill) / 100
-	if lastShootDiff > 1000 {
-		return 1000
+	if lastShootDiff > assets.SPEED_ENEMY_GENERATOR {
+		return assets.SPEED_ENEMY_GENERATOR
 	}
 
 	variant := game.KilledEnemiesCount*assets.IMPACT_SHOOT_ON_ENEMY_GENERATING - lastShootDiff
