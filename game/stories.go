@@ -54,7 +54,7 @@ func (game Game) storyByTtl(text string, seconds int, color term.Attribute) inte
 
 func (game Game) storyHelpAboutSpeedOfZombies() interaction.Story {
 	return game.storyByKey(
-		"🤵: If you kill more then more zombies will know you are here",
+		"🤵: If you kill more then more zombies will know you are here\nMind the awareness percentage below the screen",
 		term.ColorLightRed,
 	)
 }
