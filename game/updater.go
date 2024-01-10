@@ -21,6 +21,7 @@ func (game *Game) update() {
 
 		game.moveShooter()
 
+		game.decreaseEnemyGeneratorSpeed()
 		game.generateEnemy()
 		game.moveEnemies()
 
@@ -37,10 +38,10 @@ func (game *Game) generateBlocks() {
 
 	game.Blocks = []entities.Object{}
 
-	count := helpers.RandomNumberBetween(10, 15)
+	count := helpers.RandomNumberBetween(3, 5)
 
 	for i := 0; i < count; i++ {
-		size := helpers.RandomNumberBetween(5, 10)
+		size := helpers.RandomNumberBetween(3, 15)
 		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
 
 		for j := 0; j < size; j++ {
@@ -111,6 +112,27 @@ func (game *Game) isShooterBehindOfBlock() *entities.Object {
 	return nil
 }
 
+func (game *Game) decreaseEnemyGeneratorSpeed() {
+	if !game.isTimeToIncreaseEnemyGeneratorSpeed() {
+		return
+	}
+
+	nextSpeed := game.SpeedEnemyGenerator + assets.IMPACT_SHOOT_ON_ENEMY_GENERATING
+
+	if nextSpeed <= assets.SPEED_MAX_ENEMY_GENERATOR {
+		game.SpeedEnemyGenerator = nextSpeed
+	}
+}
+
+func (game *Game) isTimeToIncreaseEnemyGeneratorSpeed() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.IncreaseEnemyGeneratorSpeed+int64(assets.INTERVAL_ENEMY_GENERATOR_SPEED_INCREASER) {
+		game.LastTimeActions.IncreaseEnemyGeneratorSpeed = time.Now().UnixMilli()
+		return true
+	}
+
+	return false
+}
+
 func (game *Game) generateEnemy() {
 	if !game.isTimeToGenerateEnemy() {
 		return
@@ -132,28 +154,12 @@ func (game *Game) generateEnemy() {
 }
 
 func (game *Game) isTimeToGenerateEnemy() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(game.enemyGeneratorSpeed()) {
+	if time.Now().UnixMilli() > game.LastTimeActions.EnemyGenerator+int64(game.SpeedEnemyGenerator) {
 		game.LastTimeActions.EnemyGenerator = time.Now().UnixMilli()
 		return true
 	}
 
 	return false
-}
-
-func (game *Game) enemyGeneratorSpeed() uint {
-	lastShootDiff := uint(time.Now().UnixMilli()-game.LastTimeActions.Kill) / 100
-	if lastShootDiff > assets.SPEED_ENEMY_GENERATOR {
-		return assets.SPEED_ENEMY_GENERATOR
-	}
-
-	variant := game.KilledEnemiesCount*assets.IMPACT_SHOOT_ON_ENEMY_GENERATING - lastShootDiff
-	if variant > 800 {
-		return 200
-	}
-
-	speed := assets.SPEED_ENEMY_GENERATOR - variant
-
-	return speed
 }
 
 func (game *Game) moveEnemies() {

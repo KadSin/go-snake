@@ -30,6 +30,16 @@ func (game *Game) EventCollisionEnemyByBullet(enemy *entities.Enemy, bullet *ent
 	game.LastTimeActions.Kill = time.Now().UnixMilli()
 
 	game.Shooter.RemoveBullet(bullet)
+
+	game.increaseEnemyGeneratorSpeed()
+}
+
+func (game *Game) increaseEnemyGeneratorSpeed() {
+	nextSpeed := game.SpeedEnemyGenerator - assets.IMPACT_SHOOT_ON_ENEMY_GENERATING*10
+
+	if nextSpeed >= assets.SPEED_MIN_ENEMY_GENERATOR {
+		game.SpeedEnemyGenerator = nextSpeed
+	}
 }
 
 func (game *Game) removeEnemy(enemy *entities.Enemy) {

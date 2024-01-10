@@ -21,6 +21,7 @@ func (game *Game) render() {
 	game.drawKilledEnemiesCount()
 	game.drawBlood()
 	game.drawScreenTime()
+	game.drawEnemyAwareness()
 
 	term.Flush()
 	term.Clear(term.ColorDefault, assets.COLOR_BACKGROUND)
@@ -94,7 +95,7 @@ func (game *Game) screenLevel() (string, term.Attribute) {
 }
 
 func (game *Game) drawKilledEnemiesCount() {
-	killedEnemiesCount := "💀" + strconv.FormatInt(int64(game.KilledEnemiesCount), 10)
+	killedEnemiesCount := "💀" + toString(game.KilledEnemiesCount)
 
 	content := interaction.Content{
 		Position:  assets.Coordinate{X: game.Screen.End.X, Y: game.Screen.Start.Y - 2},
@@ -122,4 +123,20 @@ func (game *Game) drawScreenTime() {
 		Alignment: interaction.ALIGNMENT_CENTER,
 	}
 	content.Print()
+}
+
+func (game *Game) drawEnemyAwareness() {
+	awareness := 100 - (game.SpeedEnemyGenerator-assets.SPEED_MIN_ENEMY_GENERATOR)*100/assets.SPEED_MAX_ENEMY_GENERATOR
+
+	content := interaction.Content{
+		Position:  assets.Coordinate{X: game.Screen.End.X / 2, Y: game.Screen.End.Y},
+		Text:      "Awareness: %" + toString(awareness),
+		Color:     term.ColorWhite,
+		Alignment: interaction.ALIGNMENT_CENTER,
+	}
+	content.Print()
+}
+
+func toString(number int) string {
+	return strconv.FormatInt(int64(number), 10)
 }

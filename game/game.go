@@ -10,30 +10,32 @@ import (
 )
 
 type Game struct {
-	Screen             assets.Screen
-	Exited             bool
-	Shooter            entities.Shooter
-	Enemies            []*entities.Enemy
-	Blocks             []entities.Object
-	KilledEnemiesCount uint
-	LastTimeActions    LastActionAt
-	StartedAt          int64
+	Screen              assets.Screen
+	Exited              bool
+	Shooter             entities.Shooter
+	Enemies             []*entities.Enemy
+	KilledEnemiesCount  int
+	SpeedEnemyGenerator int
+	Blocks              []entities.Object
+	LastTimeActions     LastActionAt
+	StartedAt           int64
 }
 
 type LastActionAt struct {
-	BlocksGenerator int64
-	Enemies         map[*entities.Enemy]int64
-	EnemyGenerator  int64
-	Shooter         int64
-	Bullets         int64
-	Kill            int64
+	BlocksGenerator             int64
+	Enemies                     map[*entities.Enemy]int64
+	EnemyGenerator              int64
+	IncreaseEnemyGeneratorSpeed int64
+	Shooter                     int64
+	Bullets                     int64
+	Kill                        int64
 }
 
 func (game *Game) Start() {
 	game.showStoryReady()
-
 	game.StartedAt = time.Now().Unix()
 
+	game.SpeedEnemyGenerator = assets.SPEED_MAX_ENEMY_GENERATOR
 	game.LastTimeActions.Enemies = make(map[*entities.Enemy]int64)
 
 	game.Shooter.Speed = assets.SPEED_SHOOTER
