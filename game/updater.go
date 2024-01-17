@@ -17,8 +17,6 @@ func (game *Game) update() {
 			break
 		}
 
-		game.generateBlocks()
-
 		game.moveShooter()
 
 		game.decreaseEnemyGeneratorSpeed()
@@ -27,56 +25,11 @@ func (game *Game) update() {
 
 		game.moveBullets()
 
+		game.changePortalDirection()
+		game.movePortal()
+
 		game.render()
 	}
-}
-
-func (game *Game) generateBlocks() {
-	if !game.isTimeToGenerateBlocks() {
-		return
-	}
-
-	game.Blocks = []entities.Object{}
-
-	count := helpers.RandomNumberBetween(3, 5)
-
-	for i := 0; i < count; i++ {
-		size := helpers.RandomNumberBetween(3, 15)
-		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
-
-		for j := 0; j < size; j++ {
-			isHorizontal := helpers.RandomBoolean()
-
-			shape := '█'
-			if isHorizontal {
-				shape = '▀'
-			}
-
-			block := entities.Object{
-				Shape:    shape,
-				Location: location,
-				Screen:   game.Screen,
-				Color:    assets.COLOR_WALLS,
-			}
-
-			if isHorizontal {
-				location.X++
-			} else {
-				location.Y++
-			}
-
-			game.Blocks = append(game.Blocks, block)
-		}
-	}
-}
-
-func (game *Game) isTimeToGenerateBlocks() bool {
-	if time.Now().UnixMilli() > game.LastTimeActions.BlocksGenerator+assets.SPEED_BLOCKS_GENERATOR {
-		game.LastTimeActions.BlocksGenerator = time.Now().UnixMilli()
-		return true
-	}
-
-	return false
 }
 
 func (game *Game) moveShooter() {
@@ -87,6 +40,10 @@ func (game *Game) moveShooter() {
 			if event != nil {
 				return
 			}
+		}
+
+		if game.Shooter.Person.DoesHit(game.Portal) {
+			game.EventCollisionPortalByShooter()
 		}
 
 		game.Shooter.Person.UpdateLocation(1)
@@ -250,4 +207,40 @@ func (game *Game) anEnemyHitBy(bullet *entities.Object) *entities.Enemy {
 	}
 
 	return nil
+}
+
+func (game *Game) movePortal() {
+	if !game.isTimeToMovePortal() {
+		return
+	}
+
+	game.Portal.UpdateLocation(1)
+}
+
+func (game *Game) isTimeToMovePortal() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.Portal+assets.SPEED_PORTAL {
+		game.LastTimeActions.Portal = time.Now().UnixMilli()
+
+		return true
+	}
+
+	return false
+}
+
+func (game *Game) changePortalDirection() {
+	if !game.isTimeToChangePortalDirection() {
+		return
+	}
+
+	game.Portal.Direction = uint8(helpers.RandomNumberBetween(1, 4))
+}
+
+func (game *Game) isTimeToChangePortalDirection() bool {
+	if time.Now().UnixMilli() > game.LastTimeActions.PortalDirection+assets.INTERVAL_PORTAL_DIRECTION {
+		game.LastTimeActions.PortalDirection = time.Now().UnixMilli()
+
+		return true
+	}
+
+	return false
 }

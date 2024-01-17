@@ -13,6 +13,7 @@ import (
 func (game *Game) render() {
 	game.drawEntities()
 
+	game.drawPortal()
 	game.drawBlocks()
 	game.drawWalls()
 
@@ -37,6 +38,10 @@ func (game *Game) drawEntities() {
 	for _, enemy := range game.Enemies {
 		printObject(enemy.Person)
 	}
+}
+
+func (game *Game) drawPortal() {
+	printObject(game.Portal)
 }
 
 func (game *Game) drawBlocks() {

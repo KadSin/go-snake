@@ -3,6 +3,9 @@ package assets
 import term "github.com/nsf/termbox-go"
 
 const (
+	SPEED_PORTAL              = 30
+	INTERVAL_PORTAL_DIRECTION = 500
+
 	SPEED_SHOOTER = 40
 	SPEED_BULLET  = 6
 
@@ -12,8 +15,6 @@ const (
 	SPEED_MIN_ENEMY_GENERATOR                = 100
 	SPEED_MAX_ENEMY_GENERATOR                = 1000
 	INTERVAL_ENEMY_GENERATOR_SPEED_INCREASER = 100
-
-	SPEED_BLOCKS_GENERATOR = 10000
 )
 
 const (

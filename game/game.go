@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"kadsin/shoot-run/game/assets"
 	"kadsin/shoot-run/game/entities"
+	"kadsin/shoot-run/game/helpers"
 	"time"
 
 	term "github.com/nsf/termbox-go"
@@ -17,12 +18,14 @@ type Game struct {
 	KilledEnemiesCount  int
 	SpeedEnemyGenerator int
 	Blocks              []entities.Object
+	Portal              entities.Object
 	LastTimeActions     LastActionAt
 	StartedAt           int64
 }
 
 type LastActionAt struct {
-	BlocksGenerator             int64
+	Portal                      int64
+	PortalDirection             int64
 	Enemies                     map[*entities.Enemy]int64
 	EnemyGenerator              int64
 	IncreaseEnemyGeneratorSpeed int64
@@ -42,6 +45,13 @@ func (game *Game) Start() {
 	game.Shooter.Person.Location = assets.Coordinate{
 		X: game.Screen.End.X / 2,
 		Y: game.Screen.End.Y / 2,
+	}
+
+	game.generateBlocks()
+	game.Portal = entities.Object{
+		Shape:    '🌀',
+		Screen:   game.Screen,
+		Location: helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 1, Y: 1}),
 	}
 
 	go game.listenToKeyboard()
