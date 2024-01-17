@@ -14,7 +14,7 @@ func RandomIntElement(first int, second int) int {
 }
 
 func RandomNumberBetween(min int, max int) int {
-	return rand.Intn(max-min) + min
+	return rand.Intn(max+1-min) + min
 }
 
 func RandomBoolean() bool {
