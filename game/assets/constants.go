@@ -3,7 +3,7 @@ package assets
 import term "github.com/nsf/termbox-go"
 
 const (
-	SPEED_PORTAL              = 20
+	SPEED_PORTAL              = 30
 	INTERVAL_PORTAL_DIRECTION = 500
 
 	SPEED_SHOOTER = 40
