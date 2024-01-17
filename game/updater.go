@@ -42,6 +42,10 @@ func (game *Game) moveShooter() {
 			}
 		}
 
+		if game.Shooter.Person.DoesHit(game.Portal) {
+			game.EventCollisionPortalByShooter()
+		}
+
 		game.Shooter.Person.UpdateLocation(1)
 	}
 }

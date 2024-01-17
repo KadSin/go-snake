@@ -47,6 +47,7 @@ func (game *Game) Start() {
 		Y: game.Screen.End.Y / 2,
 	}
 
+	game.generateBlocks()
 	game.Portal = entities.Object{
 		Shape:    '🌀',
 		Screen:   game.Screen,
