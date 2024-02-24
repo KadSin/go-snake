@@ -24,12 +24,12 @@ func main() {
 	}
 	g.Shooter = entities.Shooter{
 		Person: entities.Object{
-			Shape:     '●',
+			Shape:     assets.SHAPE_SHOOTER,
 			Direction: entities.DIRECTION_RIGHT,
 			Color:     term.ColorYellow,
 			Screen:    g.Screen,
 		},
-		Blood: 5,
+		Blood: assets.SHOOTER_BLOOD,
 	}
 
 	g.Start()

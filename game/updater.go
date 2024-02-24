@@ -97,7 +97,7 @@ func (game *Game) generateEnemy() {
 
 	enemy := entities.Enemy{
 		Person: entities.Object{
-			Shape:    '#',
+			Shape:    assets.SHAPE_ENEMY,
 			Location: helpers.RandomCoordinateOnBorders(game.Screen),
 			Screen:   game.Screen,
 			Color:    assets.COLOR_ENEMIES,

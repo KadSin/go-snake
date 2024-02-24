@@ -33,6 +33,17 @@ const (
 )
 
 const (
+	SHOOTER_BLOOD = 5
+)
+
+const (
 	SHAPE_BLOCK_HORIZONTAL = '▀'
 	SHAPE_BLOCK_VERTICAL   = '█'
+	SHAPE_BULLET           = '*'
+	SHAPE_PORTAL           = '🌀'
+	SHAPE_WALL             = '█'
+	SHAPE_ENEMY            = '#'
+	SHAPE_SHOOTER          = '●'
 )
+
+var SHAPE_SHOOTER_STATES = [...]string{"😖", "😨", "😐", "😀", "😄", "😁", "😇"}

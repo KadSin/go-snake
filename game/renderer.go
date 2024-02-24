@@ -56,13 +56,13 @@ func printObject(object entities.Object) {
 
 func (game *Game) drawWalls() {
 	for x := game.Screen.Start.X - 1; x < game.Screen.End.X+1; x++ {
-		term.SetCell(x, game.Screen.Start.Y-1, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
-		term.SetCell(x, game.Screen.End.Y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+		term.SetCell(x, game.Screen.Start.Y-1, assets.SHAPE_WALL, assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+		term.SetCell(x, game.Screen.End.Y, assets.SHAPE_WALL, assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
 	}
 
 	for y := game.Screen.Start.Y - 1; y < game.Screen.End.Y+1; y++ {
-		term.SetCell(game.Screen.Start.X-1, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
-		term.SetCell(game.Screen.End.X, y, '█', assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+		term.SetCell(game.Screen.Start.X-1, y, assets.SHAPE_WALL, assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
+		term.SetCell(game.Screen.End.X, y, assets.SHAPE_WALL, assets.COLOR_WALLS, assets.COLOR_BACKGROUND)
 	}
 }
 

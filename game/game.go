@@ -49,7 +49,7 @@ func (game *Game) Start() {
 
 	game.generateBlocks()
 	game.Portal = entities.Object{
-		Shape:    '🌀',
+		Shape:    assets.SHAPE_PORTAL,
 		Screen:   game.Screen,
 		Location: helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 1, Y: 1}),
 	}

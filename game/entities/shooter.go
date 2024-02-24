@@ -14,7 +14,7 @@ type Shooter struct {
 
 func (shooter *Shooter) Shoot() {
 	bullet := &Object{
-		Shape:     '*',
+		Shape:     assets.SHAPE_BULLET,
 		Direction: shooter.Person.Direction,
 		Color:     assets.COLOR_BULLETS,
 		Location:  shooter.Person.Location,
@@ -42,11 +42,10 @@ func (shooter *Shooter) RemoveBullet(bullet *Object) {
 }
 
 func (shooter *Shooter) State() string {
-	states := []string{"😖", "😨", "😐", "😀", "😄", "😁"}
-
-	if shooter.Blood > len(states) {
-		return "😇"
+	stateCount := len(assets.SHAPE_SHOOTER_STATES)
+	if shooter.Blood > stateCount-1 {
+		return assets.SHAPE_SHOOTER_STATES[stateCount-1]
 	}
 
-	return states[shooter.Blood]
+	return assets.SHAPE_SHOOTER_STATES[shooter.Blood]
 }
