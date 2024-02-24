@@ -59,6 +59,41 @@ func (game *Game) Start() {
 	game.update()
 }
 
+func (game *Game) generateBlocks() {
+	game.Blocks = []entities.Object{}
+
+	count := helpers.RandomNumberBetween(3, 5)
+
+	for i := 0; i < count; i++ {
+		size := helpers.RandomNumberBetween(3, 15)
+		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
+
+		for j := 0; j < size; j++ {
+			isHorizontal := helpers.RandomBoolean()
+
+			shape := assets.SHAPE_BLOCK_VERTICAL
+			if isHorizontal {
+				shape = assets.SHAPE_BLOCK_HORIZONTAL
+			}
+
+			block := entities.Object{
+				Shape:    shape,
+				Location: location,
+				Screen:   game.Screen,
+				Color:    assets.COLOR_WALLS,
+			}
+
+			if isHorizontal {
+				location.X++
+			} else {
+				location.Y++
+			}
+
+			game.Blocks = append(game.Blocks, block)
+		}
+	}
+}
+
 func (game *Game) listenToKeyboard() {
 	for {
 		var event = term.PollEvent()

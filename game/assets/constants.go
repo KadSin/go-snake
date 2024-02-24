@@ -31,3 +31,8 @@ const (
 const (
 	KILL_TIMES_TO_SHOW_ENEMY_INCREASING_STORY = 3
 )
+
+const (
+	SHAPE_BLOCK_HORIZONTAL = '▀'
+	SHAPE_BLOCK_VERTICAL   = '█'
+)

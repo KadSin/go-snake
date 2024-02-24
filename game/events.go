@@ -69,38 +69,3 @@ func (game *Game) EventCollisionPortalByShooter() {
 
 	game.Enemies = make([]*entities.Enemy, 0)
 }
-
-func (game *Game) generateBlocks() {
-	game.Blocks = []entities.Object{}
-
-	count := helpers.RandomNumberBetween(3, 5)
-
-	for i := 0; i < count; i++ {
-		size := helpers.RandomNumberBetween(3, 15)
-		location := helpers.RandomCoordinate(game.Screen, assets.Coordinate{X: 2, Y: 2})
-
-		for j := 0; j < size; j++ {
-			isHorizontal := helpers.RandomBoolean()
-
-			shape := '█'
-			if isHorizontal {
-				shape = '▀'
-			}
-
-			block := entities.Object{
-				Shape:    shape,
-				Location: location,
-				Screen:   game.Screen,
-				Color:    assets.COLOR_WALLS,
-			}
-
-			if isHorizontal {
-				location.X++
-			} else {
-				location.Y++
-			}
-
-			game.Blocks = append(game.Blocks, block)
-		}
-	}
-}
