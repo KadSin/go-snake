@@ -24,7 +24,7 @@ make compile
 
 ## Running the tests
 ```bash
-go test ./game/tests -v
+make tests
 ```
 
 ## Contributing
