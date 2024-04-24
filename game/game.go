@@ -112,6 +112,7 @@ func (game *Game) listenToKeyboard() {
 				go game.Shooter.Shoot()
 			case term.KeyCtrlC:
 				game.Exited = true
+				return
 			}
 		}
 	}
