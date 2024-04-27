@@ -8,40 +8,36 @@ The game features a moving portal in each room, which the shooter can use to esc
 
 ![Screenshot](https://i.imgur.com/dHRmrh1.gif)
 
-## Use
-
-Go version: 1.21.3
-
-To run the game:
-```bash
-make run
-```
-
-To compile project in `bin` directory:
-```bash
-make compile
-```
+## Play
 
 ### Docker
-#### Download image from dockerhub:
-```bash
-docker pull kadsin/shoot-run
-```
 
-#### Then should run it with `-it flag`:
+Should execute it with `-it flag`:
+
 ```bash
 docker run -it --rm --name shoot-run kadsin/shoot-run
 ```
 
-#### Build docker image:
+### Locally
+
+Go version: `1.21.3`
+
 ```bash
-docker build -t kadsin/shoot-run .
+make run
+```
+
+#### Compile (To the `bin` directory)
+
+```bash
+make compile
 ```
 
 ## Running the tests
+
 ```bash
 make tests
 ```
 
 ## Contributing
+
 Feel free to create any pull request you want to improve the game.
