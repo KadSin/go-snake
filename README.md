@@ -22,6 +22,22 @@ To compile project in `bin` directory:
 make compile
 ```
 
+### Docker
+#### Download image from dockerhub:
+```bash
+docker pull kadsin/shoot-run
+```
+
+#### Then should run it with `-it flag`:
+```bash
+docker run -it --rm --name shoot-run kadsin/shoot-run
+```
+
+#### Build docker image:
+```bash
+docker build -t kadsin/shoot-run .
+```
+
 ## Running the tests
 ```bash
 make tests
